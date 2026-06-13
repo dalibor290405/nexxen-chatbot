@@ -63,12 +63,10 @@ Idite na **Podešavanja → Nexxen Asistent** i podesite:
 | **Rezervni kontakt** | email koji se prikazuje posetiocu kad AI ne radi |
 | **WooCommerce nacrt** | uključeno (kreira pending porudžbinu) |
 | **ID proizvoda** | (opciono) ID Nexxen proizvoda u WooCommerce-u |
-| **Sistem-prompt** | **OBAVEZNO unesite tačnu cenu i uslove isporuke!** |
+| **Sistem-prompt** | Već popunjen (persona „Dalibor", ceo opis proizvoda, cena 65 EUR, tok porudžbine). Menjajte samo ako želite |
 | **Dozvoljeni domen (CORS)** | obično već tačno: `https://nexxen.rs` |
 
-> ⚠️ **Najvažnije:** u **Sistem-promptu** zamenite red
-> `[UNESITE TAČNU CENU I USLOVE ISPORUKE OVDE ...]`
-> stvarnom cenom, načinom plaćanja i isporukom. Od ovoga zavisi tačnost odgovora.
+> ℹ️ Sistem-prompt već sadrži sve podatke (proizvod, materijali, dostava, reklamacije, cena 65 EUR, besplatna dostava za 10+ komada). Izmenite ga samo ako se uslovi promene.
 
 Kliknite **Sačuvaj podešavanja**.
 
@@ -88,8 +86,8 @@ Otvorite **nexxen.rs** (najbolje u anonimnom/incognito prozoru) i proverite:
 
 - [ ] U donjem desnom uglu se pojavljuje plavo dugme za chat.
 - [ ] Klik otvara panel i prikazuje pozdravnu poruku.
-- [ ] Pošaljete „Zdravo" → asistent odgovara na srpskom i persira.
-- [ ] Pitate za cenu → odgovara tačno (ono što ste uneli u sistem-prompt).
+- [ ] Pošaljete „Dobar dan" → asistent se predstavlja kao Dalibor, persira, bez emoji-ja.
+- [ ] Pitate za cenu → odgovara tačno (cena zavisi od količine; 65 EUR po kartici, besplatna dostava za 10+).
 - [ ] **Bezbednost ključa:** otvorite Developer Tools (F12) → tab **Network** → pošaljite poruku → zahtev ide na `…/wp-json/nexxen/v1/chat`, a **ne** na `api.anthropic.com`. Ključ se nigde ne vidi. ✅
 - [ ] **Test porudžbine:** prođite kroz porudžbinu do potvrde, pa proverite:
 	- [ ] stigao email na `dalibor290405@gmail.com`,

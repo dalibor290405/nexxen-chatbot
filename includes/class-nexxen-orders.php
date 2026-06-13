@@ -118,13 +118,16 @@ class Nexxen_Orders {
 	 */
 	private static function sanitize( $data ) {
 		return array(
-			'ime'            => isset( $data['ime'] ) ? sanitize_text_field( $data['ime'] ) : '',
-			'telefon'        => isset( $data['telefon'] ) ? sanitize_text_field( $data['telefon'] ) : '',
-			'adresa'         => isset( $data['adresa'] ) ? sanitize_text_field( $data['adresa'] ) : '',
-			'grad'           => isset( $data['grad'] ) ? sanitize_text_field( $data['grad'] ) : '',
-			'postanski_broj' => isset( $data['postanski_broj'] ) ? sanitize_text_field( $data['postanski_broj'] ) : '',
-			'kolicina'       => isset( $data['kolicina'] ) ? max( 1, absint( $data['kolicina'] ) ) : 1,
-			'napomena'       => isset( $data['napomena'] ) ? sanitize_textarea_field( $data['napomena'] ) : '',
+			'ime'             => isset( $data['ime'] ) ? sanitize_text_field( $data['ime'] ) : '',
+			'biznis'          => isset( $data['biznis'] ) ? sanitize_text_field( $data['biznis'] ) : '',
+			'telefon'         => isset( $data['telefon'] ) ? sanitize_text_field( $data['telefon'] ) : '',
+			'email'           => isset( $data['email'] ) ? sanitize_email( $data['email'] ) : '',
+			'adresa'          => isset( $data['adresa'] ) ? sanitize_text_field( $data['adresa'] ) : '',
+			'grad'            => isset( $data['grad'] ) ? sanitize_text_field( $data['grad'] ) : '',
+			'postanski_broj'  => isset( $data['postanski_broj'] ) ? sanitize_text_field( $data['postanski_broj'] ) : '',
+			'kolicina'        => isset( $data['kolicina'] ) ? max( 1, absint( $data['kolicina'] ) ) : 1,
+			'google_lokacija' => isset( $data['google_lokacija'] ) ? sanitize_text_field( $data['google_lokacija'] ) : '',
+			'napomena'        => isset( $data['napomena'] ) ? sanitize_textarea_field( $data['napomena'] ) : '',
 		);
 	}
 
@@ -142,18 +145,21 @@ class Nexxen_Orders {
 		$ok = $wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 			$table,
 			array(
-				'created_at'     => current_time( 'mysql', true ),
-				'ime'            => $order['ime'],
-				'telefon'        => $order['telefon'],
-				'adresa'         => $order['adresa'],
-				'grad'           => $order['grad'],
-				'postanski_broj' => $order['postanski_broj'],
-				'kolicina'       => $order['kolicina'],
-				'napomena'       => $order['napomena'],
-				'raw_json'       => wp_json_encode( $order, JSON_UNESCAPED_UNICODE ),
-				'ip'             => $ip,
+				'created_at'      => current_time( 'mysql', true ),
+				'ime'             => $order['ime'],
+				'biznis'          => $order['biznis'],
+				'telefon'         => $order['telefon'],
+				'email'           => $order['email'],
+				'adresa'          => $order['adresa'],
+				'grad'            => $order['grad'],
+				'postanski_broj'  => $order['postanski_broj'],
+				'kolicina'        => $order['kolicina'],
+				'google_lokacija' => $order['google_lokacija'],
+				'napomena'        => $order['napomena'],
+				'raw_json'        => wp_json_encode( $order, JSON_UNESCAPED_UNICODE ),
+				'ip'              => $ip,
 			),
-			array( '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s' )
+			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s' )
 		);
 
 		if ( false === $ok ) {
@@ -196,11 +202,14 @@ class Nexxen_Orders {
 			'Nova porudžbina je primljena preko Nexxen asistenta:',
 			'',
 			'Ime i prezime: ' . $order['ime'],
+			'Naziv biznisa: ' . ( '' !== $order['biznis'] ? $order['biznis'] : '-' ),
 			'Telefon: ' . $order['telefon'],
+			'Email kupca: ' . ( '' !== $order['email'] ? $order['email'] : '-' ),
 			'Adresa: ' . $order['adresa'],
 			'Grad: ' . $order['grad'],
 			'Poštanski broj: ' . $order['postanski_broj'],
 			'Količina: ' . $order['kolicina'],
+			'Google lokacija/link: ' . ( '' !== $order['google_lokacija'] ? $order['google_lokacija'] : '-' ),
 			'Napomena: ' . ( '' !== $order['napomena'] ? $order['napomena'] : '-' ),
 			'',
 			'Vreme: ' . current_time( 'd.m.Y. H:i' ),
@@ -251,10 +260,12 @@ class Nexxen_Orders {
 				array(
 					'first_name' => $first_name,
 					'last_name'  => $last_name,
+					'company'    => $order['biznis'],
 					'address_1'  => $order['adresa'],
 					'city'       => $order['grad'],
 					'postcode'   => $order['postanski_broj'],
 					'phone'      => $order['telefon'],
+					'email'      => is_email( $order['email'] ) ? $order['email'] : '',
 					'country'    => 'RS',
 				),
 				'billing'
@@ -282,6 +293,12 @@ class Nexxen_Orders {
 
 			// Napomena za radnike + porudžbina ide u status "na čekanju" (pending).
 			$note = 'Porudžbina kreirana preko Nexxen asistenta (chatbot).';
+			if ( '' !== $order['biznis'] ) {
+				$note .= ' Biznis: ' . $order['biznis'] . '.';
+			}
+			if ( '' !== $order['google_lokacija'] ) {
+				$note .= ' Google lokacija/link: ' . $order['google_lokacija'] . '.';
+			}
 			if ( '' !== $order['napomena'] ) {
 				$note .= ' Napomena kupca: ' . $order['napomena'];
 			}
