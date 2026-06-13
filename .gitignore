@@ -1,0 +1,5 @@
+# Privremeni folder koji se pravi pri pakovanju zip-a
+/build/
+
+# Log fajlovi
+*.log
