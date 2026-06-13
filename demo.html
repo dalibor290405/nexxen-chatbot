@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexxen Asistent — DEMO (lokalno testiranje)</title>
+
+<!--
+  ============================================================================
+  DEMO FAJL ZA LOKALNO TESTIRANJE — NIJE ZA PRODUKCIJU!
+  ----------------------------------------------------------------------------
+  Ovaj fajl poziva Anthropic API DIREKTNO iz browsera, sa Vašim ključem.
+  To znači da je ključ VIDLJIV u browseru (Network tab). Koristite isključivo
+  na svom računaru za testiranje izgleda i toka razgovora/porudžbine.
+
+  ⛔ NIKADA ne postavljajte ovaj fajl na javni sajt i ne delite ga.
+  ✅ Na produkciji koristite WordPress plugin (backend proxy skriva ključ).
+
+  CSS i JS su namerno ugrađeni u ovaj jedan fajl da možete samo da ga
+  otvorite u browseru i odmah testirate.
+  ============================================================================
+-->
+
+<style>
+/* ===========================================================================
+   1) STIL DEMO STRANICE (traka sa kontrolama + lažni sadržaj sajta)
+   =========================================================================== */
+* { box-sizing: border-box; }
+body {
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+	color: #1f2328;
+	background: #eef1f4;
+}
+
+/* Crveno upozorenje */
+.demo-warning {
+	background: #b32d2e;
+	color: #fff;
+	padding: 10px 16px;
+	font-size: 14px;
+	text-align: center;
+	line-height: 1.5;
+}
+.demo-warning strong { font-weight: 700; }
+
+/* Traka sa kontrolama (ključ, model, sistem-prompt) */
+.demo-bar {
+	background: #fff;
+	border-bottom: 1px solid #e1e4e8;
+	padding: 14px 16px;
+}
+.demo-bar .row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: flex-end;
+	max-width: 960px;
+	margin: 0 auto;
+}
+.demo-field { display: flex; flex-direction: column; gap: 4px; }
+.demo-field label { font-size: 12px; font-weight: 600; color: #57606a; }
+.demo-field input, .demo-field select {
+	border: 1px solid #d0d7de;
+	border-radius: 8px;
+	padding: 8px 10px;
+	font-size: 14px;
+	font-family: inherit;
+}
+#demo-key { width: 360px; max-width: 70vw; }
+.demo-actions { display: flex; gap: 8px; align-items: center; }
+.demo-btn {
+	border: 1px solid #d0d7de;
+	background: #f6f8fa;
+	border-radius: 8px;
+	padding: 8px 12px;
+	cursor: pointer;
+	font-size: 14px;
+}
+.demo-btn:hover { background: #eef1f4; }
+.demo-remember { font-size: 12px; color: #57606a; display: flex; align-items: center; gap: 5px; }
+
+/* Sklopivi sistem-prompt */
+.demo-prompt-wrap { max-width: 960px; margin: 12px auto 0; }
+.demo-prompt-wrap summary { cursor: pointer; font-size: 13px; color: #1a73e8; font-weight: 600; }
+.demo-prompt-wrap textarea {
+	width: 100%;
+	margin-top: 8px;
+	border: 1px solid #d0d7de;
+	border-radius: 8px;
+	padding: 10px;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 12.5px;
+	line-height: 1.5;
+}
+.demo-hint { font-size: 12px; color: #b32d2e; margin-top: 6px; }
+
+/* Lažni sadržaj sajta (da widget izgleda u kontekstu) */
+.demo-page { max-width: 760px; margin: 40px auto; padding: 0 16px; }
+.demo-hero {
+	background: #fff;
+	border: 1px solid #e1e4e8;
+	border-radius: 16px;
+	padding: 36px;
+	text-align: center;
+}
+.demo-hero h1 { margin: 0 0 10px; font-size: 30px; }
+.demo-hero p { color: #57606a; font-size: 17px; margin: 0 auto; max-width: 520px; line-height: 1.6; }
+.demo-tip { text-align: center; margin-top: 24px; color: #57606a; font-size: 15px; }
+.demo-tip b { color: #1a73e8; }
+
+/* Panel "uhvaćena porudžbina" */
+#demo-order {
+	max-width: 760px;
+	margin: 24px auto;
+	padding: 0 16px;
+}
+#demo-order .box {
+	background: #eaf7ee;
+	border: 1px solid #a6e0b8;
+	border-radius: 12px;
+	padding: 16px 18px;
+}
+#demo-order h3 { margin: 0 0 8px; color: #1a7f37; }
+#demo-order pre {
+	background: #fff;
+	border: 1px solid #cfe9d6;
+	border-radius: 8px;
+	padding: 12px;
+	overflow: auto;
+	font-size: 13px;
+	margin: 8px 0 0;
+}
+#demo-order .note { font-size: 13px; color: #57606a; margin-top: 8px; }
+
+/* ===========================================================================
+   2) STIL WIDGETA (identičan kao u pluginu: assets/css/widget.css)
+   =========================================================================== */
+.nexxen-widget, .nexxen-widget * { box-sizing: border-box; }
+
+.nexxen-bubble {
+	position: fixed; right: 20px; bottom: 20px;
+	width: 60px; height: 60px; border-radius: 50%;
+	border: none; cursor: pointer; background: #1a73e8; color: #fff;
+	box-shadow: 0 6px 20px rgba(0,0,0,.25);
+	display: flex; align-items: center; justify-content: center;
+	z-index: 999999; transition: transform .15s ease, background .15s ease;
+}
+.nexxen-bubble:hover { transform: scale(1.06); background: #1763c7; }
+.nexxen-bubble svg { width: 28px; height: 28px; fill: #fff; }
+
+.nexxen-panel {
+	position: fixed; right: 20px; bottom: 90px;
+	width: 370px; max-width: calc(100vw - 40px);
+	height: 520px; max-height: calc(100vh - 120px);
+	background: #fff; border-radius: 16px;
+	box-shadow: 0 12px 40px rgba(0,0,0,.28);
+	display: flex; flex-direction: column; overflow: hidden;
+	z-index: 999999;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+	font-size: 15px; line-height: 1.45; color: #1f2328;
+}
+.nexxen-hidden { display: none !important; }
+
+.nexxen-header {
+	background: #1a73e8; color: #fff; padding: 14px 16px;
+	display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.nexxen-header .nexxen-title { font-weight: 600; font-size: 16px; }
+.nexxen-close { background: none; border: none; color: #fff; cursor: pointer; font-size: 22px; line-height: 1; padding: 0 4px; opacity: .9; }
+.nexxen-close:hover { opacity: 1; }
+
+.nexxen-messages { flex: 1; overflow-y: auto; padding: 16px; background: #f6f8fa; display: flex; flex-direction: column; gap: 10px; }
+
+.nexxen-msg { max-width: 82%; padding: 10px 13px; border-radius: 14px; word-wrap: break-word; white-space: pre-wrap; }
+.nexxen-msg-user { align-self: flex-end; background: #1a73e8; color: #fff; border-bottom-right-radius: 4px; }
+.nexxen-msg-bot { align-self: flex-start; background: #fff; color: #1f2328; border: 1px solid #e1e4e8; border-bottom-left-radius: 4px; }
+
+.nexxen-msg-error { align-self: flex-start; background: #fff3f3; color: #b32d2e; border: 1px solid #ffd0d0; font-size: 14px; }
+.nexxen-msg-error a { color: #b32d2e; font-weight: 600; }
+.nexxen-retry { display: inline-block; margin-top: 6px; background: #b32d2e; color: #fff; border: none; border-radius: 8px; padding: 5px 10px; cursor: pointer; font-size: 13px; }
+
+.nexxen-typing { align-self: flex-start; display: flex; gap: 4px; padding: 12px 14px; background: #fff; border: 1px solid #e1e4e8; border-radius: 14px; border-bottom-left-radius: 4px; }
+.nexxen-typing span { width: 7px; height: 7px; border-radius: 50%; background: #b0b6bd; animation: nexxen-blink 1.2s infinite both; }
+.nexxen-typing span:nth-child(2) { animation-delay: .2s; }
+.nexxen-typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes nexxen-blink { 0%,80%,100% { opacity: .3; } 40% { opacity: 1; } }
+
+.nexxen-input-area { display: flex; align-items: flex-end; gap: 8px; padding: 10px; border-top: 1px solid #e1e4e8; background: #fff; flex-shrink: 0; }
+.nexxen-input { flex: 1; resize: none; border: 1px solid #d0d7de; border-radius: 10px; padding: 9px 12px; font-family: inherit; font-size: 15px; line-height: 1.4; max-height: 120px; outline: none; }
+.nexxen-input:focus { border-color: #1a73e8; }
+.nexxen-send { background: #1a73e8; border: none; border-radius: 10px; color: #fff; cursor: pointer; padding: 9px 14px; font-size: 15px; flex-shrink: 0; }
+.nexxen-send:hover { background: #1763c7; }
+.nexxen-send:disabled { background: #9bbcef; cursor: not-allowed; }
+
+@media (max-width: 480px) {
+	.nexxen-panel { right: 10px; left: 10px; bottom: 80px; width: auto; height: calc(100vh - 100px); }
+}
+</style>
+</head>
+<body>
+
+<!-- UPOZORENJE -->
+<div class="demo-warning">
+	⚠️ <strong>SAMO ZA LOKALNO TESTIRANJE.</strong> Vaš API ključ je vidljiv u browseru. Ne postavljajte ovaj fajl na internet i ne delite ga. Na produkciji koristite plugin (backend skriva ključ).
+</div>
+
+<!-- KONTROLE -->
+<div class="demo-bar">
+	<div class="row">
+		<div class="demo-field">
+			<label for="demo-key">Anthropic API ključ</label>
+			<input type="password" id="demo-key" placeholder="sk-ant-..." autocomplete="off">
+		</div>
+		<div class="demo-field">
+			<label for="demo-model">Model</label>
+			<select id="demo-model">
+				<option value="claude-opus-4-8">Claude Opus 4.8 (najpametniji)</option>
+				<option value="claude-sonnet-4-6">Claude Sonnet 4.6 (balans)</option>
+				<option value="claude-haiku-4-5">Claude Haiku 4.5 (najjeftiniji)</option>
+			</select>
+		</div>
+		<div class="demo-actions">
+			<label class="demo-remember"><input type="checkbox" id="demo-remember" checked> Zapamti ključ (samo u ovom tabu)</label>
+			<button class="demo-btn" id="demo-reset" type="button">Resetuj razgovor</button>
+		</div>
+	</div>
+
+	<details class="demo-prompt-wrap">
+		<summary>Sistem-prompt (kliknite da izmenite cenu i ton)</summary>
+		<textarea id="demo-prompt" rows="14"></textarea>
+		<div class="demo-hint">⚠️ Zamenite red sa cenom stvarnim podacima da bi bot tačno odgovarao.</div>
+	</details>
+</div>
+
+<!-- LAŽNI SADRŽAJ SAJTA -->
+<div class="demo-page">
+	<div class="demo-hero">
+		<h1>Nexxen — NFC kartica za Google recenzije</h1>
+		<p>Jednim dodirom telefona Vaši gosti otvaraju stranicu za Google recenziju. Više recenzija, bolji rejting, bez muke.</p>
+	</div>
+	<div class="demo-tip">
+		👉 Kliknite na plavo dugme dole desno (<b>chat</b>) i testirajte razgovor i porudžbinu.
+	</div>
+</div>
+
+<!-- PANEL: UHVAĆENA PORUDŽBINA -->
+<div id="demo-order" hidden>
+	<div class="box">
+		<h3>✅ Porudžbina uhvaćena (demo)</h3>
+		<div>Bot je poslao <code>[ORDER]</code> blok. U produkciji backend ovo šalje na email, pravi WooCommerce nacrt i čuva u bazi. Ovde samo prikazujemo podatke:</div>
+		<pre id="demo-order-json"></pre>
+		<div class="note">Napomena: u demou se email/WooCommerce/baza ne izvršavaju jer nema backenda.</div>
+	</div>
+</div>
+
+<script>
+/* ===========================================================================
+   3) LOGIKA (ista kao plugin widget, ali zove Anthropic DIREKTNO)
+   =========================================================================== */
+( function() {
+	'use strict';
+
+	/* --- Podrazumevani sistem-prompt (isti kao u pluginu) --- */
+	var DEFAULT_PROMPT =
+"Vi ste „Nexxen asistent\", ljubazni prodajni i korisnički asistent za sajt nexxen.rs.\n\n" +
+"O PROIZVODU:\n" +
+"Nexxen je NFC kartica za Google recenzije. Kada kupac prisloni telefon uz karticu, automatski se otvara stranica za ostavljanje Google recenzije date firme. Tako firme (kafići, restorani, saloni, frizeri, radnje…) brzo i lako skupljaju više pozitivnih recenzija i poboljšavaju svoj rejting na Google mapama.\n\n" +
+"KAKO KOMUNICIRATE:\n" +
+"- Uvek persirate (Vi, Vaš, Vama) i pišete na srpskom jeziku.\n" +
+"- Ljubazni ste, kratki i jasni. Ne izmišljate informacije i ne obećavate ono u šta niste sigurni.\n" +
+"- Ako ne znate odgovor ili je pitanje van teme (reklamacije, tehnička podrška naloga…), ljubazno uputite korisnika da kontaktira tim na dalibor290405@gmail.com.\n\n" +
+"CENA I ISPORUKA:\n" +
+"- [UNESITE TAČNU CENU I USLOVE ISPORUKE OVDE — ovo je primer koji treba da izmenite.]\n\n" +
+"TOK PORUDŽBINE:\n" +
+"Kada korisnik želi da poruči, prikupite redom ove podatke: ime i prezime, broj telefona, adresu (ulica i broj), grad, poštanski broj, željenu količinu i opcionu napomenu.\n" +
+"Kada prikupite sve podatke, NAJPRE ih ukratko ponovite korisniku radi potvrde.\n" +
+"Tek kada korisnik POTVRDI porudžbinu, na samom KRAJU svoje poruke dodajte tačno ovaj blok (korisniku prikažite normalnu potvrdu — ovaj blok služi sistemu i korisnik ga ne vidi):\n\n" +
+"[ORDER]\n" +
+"{\"ime\":\"...\",\"telefon\":\"...\",\"adresa\":\"...\",\"grad\":\"...\",\"postanski_broj\":\"...\",\"kolicina\":1,\"napomena\":\"...\"}\n" +
+"[/ORDER]\n\n" +
+"PRAVILA ZA [ORDER] BLOK:\n" +
+"- Dodajte ga ISKLJUČIVO kada je porudžbina potvrđena i kada su prisutni svi obavezni podaci: ime, telefon, adresa, grad i količina.\n" +
+"- Nikada ga ne dodajte u običnom razgovoru ili dok prikupljate podatke.\n" +
+"- JSON mora biti validan (dvostruki navodnici, bez komentara). „kolicina\" je broj.";
+
+	var GREETING = "Zdravo! 👋 Ja sam Nexxen asistent. Kako mogu da Vam pomognem oko NFC kartice za Google recenzije?";
+	var FALLBACK = "dalibor290405@gmail.com";
+	var STR = { placeholder: "Napišite poruku…", send: "Pošalji", retry: "Pokušaj ponovo", error: "Došlo je do greške. Pokušajte ponovo." };
+
+	/* --- Stanje --- */
+	var messages = [];
+	var sending  = false;
+	var els = {};
+
+	/* --- Reference na kontrole demo trake --- */
+	var keyInput   = document.getElementById( 'demo-key' );
+	var modelSel   = document.getElementById( 'demo-model' );
+	var promptEl   = document.getElementById( 'demo-prompt' );
+	var rememberEl = document.getElementById( 'demo-remember' );
+	var resetBtn   = document.getElementById( 'demo-reset' );
+	var orderPanel = document.getElementById( 'demo-order' );
+	var orderJson  = document.getElementById( 'demo-order-json' );
+
+	promptEl.value = DEFAULT_PROMPT;
+
+	/* --- Zapamti ključ samo u sessionStorage (briše se kad se zatvori tab) --- */
+	try {
+		var saved = sessionStorage.getItem( 'nexxen_demo_key' );
+		if ( saved ) { keyInput.value = saved; }
+	} catch ( e ) {}
+	keyInput.addEventListener( 'input', function() {
+		try {
+			if ( rememberEl.checked ) { sessionStorage.setItem( 'nexxen_demo_key', keyInput.value ); }
+			else { sessionStorage.removeItem( 'nexxen_demo_key' ); }
+		} catch ( e ) {}
+	} );
+	rememberEl.addEventListener( 'change', function() {
+		try {
+			if ( ! rememberEl.checked ) { sessionStorage.removeItem( 'nexxen_demo_key' ); }
+			else { sessionStorage.setItem( 'nexxen_demo_key', keyInput.value ); }
+		} catch ( e ) {}
+	} );
+
+	resetBtn.addEventListener( 'click', function() {
+		messages = [];
+		els.messages.innerHTML = '';
+		orderPanel.hidden = true;
+		addBubble( 'bot', GREETING );
+	} );
+
+	/* --- Izgradnja widgeta (isti DOM kao plugin) --- */
+	build();
+
+	function build() {
+		var root = document.createElement( 'div' );
+		root.className = 'nexxen-widget';
+		root.innerHTML =
+			'<button class="nexxen-bubble" type="button" aria-label="Otvori chat">' +
+				'<svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.2 1.1 4.2 3 5.6V21l3.5-2c1.1.3 2.3.5 3.5.5 5.5 0 10-3.6 10-8s-4.5-8-10-8z"/></svg>' +
+			'</button>' +
+			'<div class="nexxen-panel nexxen-hidden" role="dialog" aria-label="Nexxen asistent">' +
+				'<div class="nexxen-header"><span class="nexxen-title">Nexxen asistent</span>' +
+					'<button class="nexxen-close" type="button" aria-label="Zatvori chat">&times;</button></div>' +
+				'<div class="nexxen-messages"></div>' +
+				'<div class="nexxen-input-area">' +
+					'<textarea class="nexxen-input" rows="1" placeholder="' + STR.placeholder + '" maxlength="1000"></textarea>' +
+					'<button class="nexxen-send" type="button">' + STR.send + '</button>' +
+				'</div>' +
+			'</div>';
+		document.body.appendChild( root );
+
+		els.bubble   = root.querySelector( '.nexxen-bubble' );
+		els.panel    = root.querySelector( '.nexxen-panel' );
+		els.close    = root.querySelector( '.nexxen-close' );
+		els.messages = root.querySelector( '.nexxen-messages' );
+		els.input    = root.querySelector( '.nexxen-input' );
+		els.send     = root.querySelector( '.nexxen-send' );
+
+		els.bubble.addEventListener( 'click', togglePanel );
+		els.close.addEventListener( 'click', togglePanel );
+		els.send.addEventListener( 'click', onSend );
+		els.input.addEventListener( 'keydown', function( e ) {
+			if ( 'Enter' === e.key && ! e.shiftKey ) { e.preventDefault(); onSend(); }
+		} );
+		els.input.addEventListener( 'input', function() {
+			els.input.style.height = 'auto';
+			els.input.style.height = Math.min( els.input.scrollHeight, 120 ) + 'px';
+		} );
+	}
+
+	function togglePanel() {
+		var opening = els.panel.classList.contains( 'nexxen-hidden' );
+		els.panel.classList.toggle( 'nexxen-hidden' );
+		if ( opening ) {
+			if ( 0 === messages.length ) { addBubble( 'bot', GREETING ); }
+			els.input.focus();
+		}
+	}
+
+	function onSend() {
+		if ( sending ) { return; }
+		var text = ( els.input.value || '' ).trim();
+		if ( ! text ) { return; }
+		addBubble( 'user', text );
+		messages.push( { role: 'user', content: text } );
+		els.input.value = '';
+		els.input.style.height = 'auto';
+		callAnthropic();
+	}
+
+	/* --- Direktan poziv ka Anthropic-u (umesto WordPress backenda) --- */
+	function callAnthropic() {
+		var apiKey = ( keyInput.value || '' ).trim();
+		if ( ! apiKey ) {
+			handleError( { message: 'Unesite Anthropic API ključ u polje na vrhu stranice.' } );
+			return;
+		}
+
+		sending = true;
+		els.send.disabled = true;
+		var typing = showTyping();
+
+		fetch( 'https://api.anthropic.com/v1/messages', {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/json',
+				'x-api-key': apiKey,
+				'anthropic-version': '2023-06-01',
+				// Header koji Anthropic traži za direktan poziv iz browsera (samo za razvoj):
+				'anthropic-dangerous-direct-browser-access': 'true'
+			},
+			body: JSON.stringify( {
+				model: modelSel.value,
+				max_tokens: 1024,
+				system: promptEl.value,
+				messages: messages
+			} )
+		} ).then( function( res ) {
+			return res.json().then( function( data ) { return { status: res.status, data: data }; } );
+		} ).then( function( r ) {
+			removeTyping( typing );
+
+			// Anthropic greške (npr. 401 neispravan ključ, 429 previše zahteva).
+			if ( 200 !== r.status || ! r.data || 'error' === r.data.type ) {
+				var msg = ( r.data && r.data.error && r.data.error.message ) ? r.data.error.message : ( 'HTTP ' + r.status );
+				if ( 401 === r.status ) { msg = 'Neispravan ili nepostojeći API ključ (401).'; }
+				else if ( 429 === r.status ) { msg = 'Previše zahteva (429). Sačekajte par sekundi pa pokušajte ponovo.'; }
+				else if ( r.status >= 500 ) { msg = 'Anthropic trenutno ima problem (' + r.status + '). Pokušajte ponovo.'; }
+				handleError( { message: msg } );
+				return;
+			}
+
+			var reply = extractText( r.data );
+			if ( ! reply ) { handleError( { message: STR.error } ); return; }
+
+			// Obrada [ORDER] bloka — isto kao backend: prikaži podatke i skloni blok.
+			if ( /\[ORDER\]/.test( reply ) ) {
+				var order = extractOrder( reply );
+				if ( order ) { showCapturedOrder( order ); }
+				reply = stripOrder( reply );
+			}
+
+			if ( reply ) { addBubble( 'bot', reply ); }
+			messages.push( { role: 'assistant', content: reply } );
+
+		} ).catch( function() {
+			removeTyping( typing );
+			handleError( {
+				message: 'Mrežna greška ili CORS problem. Ako ste fajl otvorili kao file://, pokušajte da ga poslužite preko lokalnog servera (uputstvo u poruci).'
+			} );
+		} ).finally( function() {
+			sending = false;
+			els.send.disabled = false;
+			els.input.focus();
+		} );
+	}
+
+	/* --- Pomoćne funkcije (iste kao backend logika) --- */
+
+	function extractText( data ) {
+		if ( ! data || ! data.content || ! data.content.length ) { return ''; }
+		var parts = [];
+		for ( var i = 0; i < data.content.length; i++ ) {
+			var b = data.content[ i ];
+			if ( b && 'text' === b.type && b.text ) { parts.push( b.text ); }
+		}
+		return parts.join( '' ).trim();
+	}
+
+	function extractOrder( text ) {
+		var m = text.match( /\[ORDER\]\s*(\{[\s\S]*?\})\s*\[\/ORDER\]/ );
+		if ( ! m ) { return null; }
+		try { return JSON.parse( m[1] ); } catch ( e ) { return null; }
+	}
+
+	function stripOrder( text ) {
+		return text.replace( /\[ORDER\][\s\S]*?\[\/ORDER\]/g, '' ).trim();
+	}
+
+	function showCapturedOrder( order ) {
+		orderJson.textContent = JSON.stringify( order, null, 2 );
+		orderPanel.hidden = false;
+		orderPanel.scrollIntoView( { behavior: 'smooth', block: 'center' } );
+	}
+
+	/* --- Prikaz poruka / grešaka / kucanja --- */
+
+	function handleError( data ) {
+		var msg = ( data && data.message ) ? data.message : STR.error;
+		var wrap = document.createElement( 'div' );
+		wrap.className = 'nexxen-msg nexxen-msg-error';
+
+		var p = document.createElement( 'div' );
+		p.textContent = msg;
+		wrap.appendChild( p );
+
+		var c = document.createElement( 'div' );
+		c.style.marginTop = '6px';
+		c.innerHTML = 'Kontakt: <a href="mailto:' + esc( FALLBACK ) + '">' + esc( FALLBACK ) + '</a>';
+		wrap.appendChild( c );
+
+		var retry = document.createElement( 'button' );
+		retry.className = 'nexxen-retry';
+		retry.type = 'button';
+		retry.textContent = STR.retry;
+		retry.addEventListener( 'click', function() { wrap.remove(); callAnthropic(); } );
+		wrap.appendChild( retry );
+
+		els.messages.appendChild( wrap );
+		scrollDown();
+	}
+
+	function addBubble( who, text ) {
+		var div = document.createElement( 'div' );
+		div.className = 'nexxen-msg ' + ( 'user' === who ? 'nexxen-msg-user' : 'nexxen-msg-bot' );
+		div.textContent = text;
+		els.messages.appendChild( div );
+		scrollDown();
+	}
+
+	function showTyping() {
+		var t = document.createElement( 'div' );
+		t.className = 'nexxen-typing';
+		t.innerHTML = '<span></span><span></span><span></span>';
+		els.messages.appendChild( t );
+		scrollDown();
+		return t;
+	}
+
+	function removeTyping( t ) { if ( t && t.parentNode ) { t.parentNode.removeChild( t ); } }
+	function scrollDown() { els.messages.scrollTop = els.messages.scrollHeight; }
+	function esc( s ) {
+		return String( s ).replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' ).replace( /'/g, '&#39;' );
+	}
+
+} )();
+</script>
+</body>
+</html>
