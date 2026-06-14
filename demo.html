@@ -565,14 +565,26 @@ Cena jedne Nexxen kartice je 65 EUR. Za porudžbine od 10 ili više komada dosta
 		callAnthropic();
 	}
 
-	function buildSystem() {
+	function buildSystem( hasImage ) {
 		var sys = promptEl.value;
-		var sal = salutation( lang );
+
+		// FIX 1: bot je već pozdravio kroz uvodnu poruku — zabrani ponovni pozdrav,
+		// čak i kada korisnik napiše "ćao" ili "zdravo".
 		if ( 'en' === lang ) {
-			sys += "\n\n[Conversation context: The user is communicating in English. Respond in English for the entire remainder of this conversation. Appropriate time-based greeting: \"" + sal + "\". The user already received an opening greeting, so do NOT begin your reply with another greeting unless the user explicitly greets you.]";
+			sys += "\n\n[Conversation context: The user has ALREADY received an opening greeting from the interface. Therefore NEVER begin your reply with a greeting (no \"Hello\", \"Hi\", \"Good morning/afternoon/evening\"), not even if the user greets you with \"hi\" or \"hello\". In that case reply warmly and naturally and go straight to helping. Keep responding in English for the rest of the conversation.]";
 		} else {
-			sys += "\n\n[Kontekst razgovora: Primereni pozdrav prema lokalnom vremenu korisnika je \"" + sal + "\". Ako pozdravljaš, koristi taj. Korisnik je već dobio uvodnu poruku sa pozdravom, zato NE počinji svoj odgovor ponovnim pozdravom osim ako te korisnik izričito pozdravi.]";
+			sys += "\n\n[Kontekst razgovora: Korisnik je VEĆ dobio uvodnu pozdravnu poruku kroz interfejs. Zato NIKADA ne počinji svoj odgovor pozdravom (bez \"Dobar dan\", \"Dobro veče\", \"Dobro jutro\", \"Zdravo\", \"Poštovani\" i slično), čak ni ako te korisnik pozdravi sa \"ćao\" ili \"zdravo\". U tom slučaju odgovori toplo i prirodno i odmah pređi na pomoć.]";
 		}
+
+		// FIX 2: slika — uputi Dalibora da analizira prostor u kontekstu Nexxen proizvoda.
+		if ( hasImage ) {
+			if ( 'en' === lang ) {
+				sys += "\n\n[The user attached a photo of their space or business. Analyze it in the context of the Nexxen product: briefly describe what you see, suggest where the Nexxen card with its oak stand would look best (reception desk, counter, table, entrance) and how it would fit that interior and style, then connect it to collecting Google reviews. Stay in character as Dalibor.]";
+			} else {
+				sys += "\n\n[Korisnik je poslao fotografiju svog prostora ili objekta. Analiziraj je u kontekstu Nexxen proizvoda: ukratko opiši šta vidiš, predloži gde bi Nexxen kartica sa hrastovim postoljem najlepše stajala (recepcija, pult, sto, ulaz) i kako bi se uklopila u taj enterijer i stil, pa to poveži sa skupljanjem Google recenzija. Ostani u ulozi Dalibora.]";
+			}
+		}
+
 		return sys;
 	}
 
@@ -586,6 +598,12 @@ Cena jedne Nexxen kartice je 65 EUR. Za porudžbine od 10 ili više komada dosta
 		els.send.disabled = true;
 		var typing = showTyping();
 
+		// Ako razgovor sadrži sliku, koristi vision model claude-sonnet-4-6.
+		var hasImage = messages.some( function( m ) {
+			return Array.isArray( m.content ) && m.content.some( function( b ) { return 'image' === b.type; } );
+		} );
+		var model = hasImage ? 'claude-sonnet-4-6' : modelSel.value;
+
 		fetch( 'https://api.anthropic.com/v1/messages', {
 			method: 'POST',
 			headers: {
@@ -595,9 +613,9 @@ Cena jedne Nexxen kartice je 65 EUR. Za porudžbine od 10 ili više komada dosta
 				'anthropic-dangerous-direct-browser-access': 'true'
 			},
 			body: JSON.stringify( {
-				model: modelSel.value,
+				model: model,
 				max_tokens: 1024,
-				system: buildSystem(),
+				system: buildSystem( hasImage ),
 				messages: messages
 			} )
 		} ).then( function( res ) {
