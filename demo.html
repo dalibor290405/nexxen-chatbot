@@ -399,7 +399,7 @@ Cena jedne Nexxen kartice je 65 EUR. Za porudžbine od 10 ili više komada dosta
 				'</div>' +
 				'<div class="nexxen-input-area">' +
 					'<button class="nexxen-attach" type="button" aria-label="Pošalji sliku" title="Pošalji sliku">' +
-						'<svg viewBox="0 0 24 24"><path d="M16.5 6.5l-7 7a2 2 0 002.83 2.83l7.07-7.07a4 4 0 00-5.66-5.66l-7.07 7.07a6 6 0 008.49 8.49L21 14"/></svg>' +
+						'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"></rect><rect x="8" y="4" width="8" height="4" rx="1"></rect><circle cx="12" cy="13.5" r="3.4" fill="#fff"></circle></svg>' +
 					'</button>' +
 					'<textarea class="nexxen-input" rows="1" placeholder="Napišite poruku…" maxlength="1000"></textarea>' +
 					'<button class="nexxen-send" type="button">Pošalji</button>' +
@@ -418,13 +418,6 @@ Cena jedne Nexxen kartice je 65 EUR. Za porudžbine od 10 ili više komada dosta
 		els.previewImg   = root.querySelector( '.nexxen-attach-preview img' );
 		els.previewName  = root.querySelector( '.nexxen-attach-name' );
 		els.previewX     = root.querySelector( '.nexxen-attach-x' );
-
-		// SVG ikonica koristi stroke umesto fill (paperclip).
-		els.attach.querySelector( 'svg' ).setAttribute( 'fill', 'none' );
-		var path = els.attach.querySelector( 'path' );
-		path.setAttribute( 'stroke', 'currentColor' );
-		path.setAttribute( 'stroke-width', '2' );
-		path.setAttribute( 'stroke-linecap', 'round' );
 
 		els.bubble.addEventListener( 'click', togglePanel );
 		els.close.addEventListener( 'click', togglePanel );
@@ -507,22 +500,40 @@ Cena jedne Nexxen kartice je 65 EUR. Za porudžbine od 10 ili više komada dosta
 	}
 
 	// Smanji sliku na max 1568px i pretvori u base64 JPEG (manji payload, manje tokena).
+	// Ako obrada preko canvas-a iz bilo kog razloga zakaže, šalje se originalna slika
+	// (rezerva) — tako se uvek pošalje validan image blok ka API-ju.
 	function processImage( file ) {
 		return new Promise( function( resolve, reject ) {
 			var reader = new FileReader();
 			reader.onload = function() {
+				var original = String( reader.result || '' );
+				var origType = ( original.match( /^data:([^;]+);/ ) || [] )[1] || file.type || 'image/jpeg';
+
+				function fallback() {
+					var b64 = original.split( ',' )[1] || '';
+					if ( ! b64 ) { reject(); return; }
+					resolve( { media_type: origType, data: b64, dataUrl: original } );
+				}
+
 				var img = new Image();
 				img.onload = function() {
-					var max = 1568, w = img.width, h = img.height;
-					if ( w > max || h > max ) { var s = Math.min( max / w, max / h ); w = Math.round( w * s ); h = Math.round( h * s ); }
-					var canvas = document.createElement( 'canvas' );
-					canvas.width = w; canvas.height = h;
-					canvas.getContext( '2d' ).drawImage( img, 0, 0, w, h );
-					var dataUrl = canvas.toDataURL( 'image/jpeg', 0.85 );
-					resolve( { media_type: 'image/jpeg', data: dataUrl.split( ',' )[1], dataUrl: dataUrl } );
+					try {
+						var max = 1568, w = img.width, h = img.height;
+						if ( ! w || ! h ) { fallback(); return; }
+						if ( w > max || h > max ) { var s = Math.min( max / w, max / h ); w = Math.round( w * s ); h = Math.round( h * s ); }
+						var canvas = document.createElement( 'canvas' );
+						canvas.width = w; canvas.height = h;
+						var ctx = canvas.getContext( '2d' );
+						if ( ! ctx ) { fallback(); return; }
+						ctx.drawImage( img, 0, 0, w, h );
+						var dataUrl = canvas.toDataURL( 'image/jpeg', 0.85 );
+						var b64 = dataUrl.split( ',' )[1];
+						if ( ! b64 ) { fallback(); return; }
+						resolve( { media_type: 'image/jpeg', data: b64, dataUrl: dataUrl } );
+					} catch ( e ) { fallback(); }
 				};
-				img.onerror = reject;
-				img.src = reader.result;
+				img.onerror = fallback;
+				img.src = original;
 			};
 			reader.onerror = reject;
 			reader.readAsDataURL( file );
@@ -579,9 +590,9 @@ Cena jedne Nexxen kartice je 65 EUR. Za porudžbine od 10 ili više komada dosta
 		// FIX 2: slika — uputi Dalibora da analizira prostor u kontekstu Nexxen proizvoda.
 		if ( hasImage ) {
 			if ( 'en' === lang ) {
-				sys += "\n\n[The user attached a photo of their space or business. Analyze it in the context of the Nexxen product: briefly describe what you see, suggest where the Nexxen card with its oak stand would look best (reception desk, counter, table, entrance) and how it would fit that interior and style, then connect it to collecting Google reviews. Stay in character as Dalibor.]";
+				sys += "\n\n[The user has attached a photo and you CAN see it in this message. Never say you cannot see images. Analyze it in the context of the Nexxen product: briefly describe what you see, suggest where the Nexxen card with its oak stand would look best (reception desk, counter, table, entrance) and how it would fit that interior and style, then connect it to collecting Google reviews. Stay in character as Dalibor.]";
 			} else {
-				sys += "\n\n[Korisnik je poslao fotografiju svog prostora ili objekta. Analiziraj je u kontekstu Nexxen proizvoda: ukratko opiši šta vidiš, predloži gde bi Nexxen kartica sa hrastovim postoljem najlepše stajala (recepcija, pult, sto, ulaz) i kako bi se uklopila u taj enterijer i stil, pa to poveži sa skupljanjem Google recenzija. Ostani u ulozi Dalibora.]";
+				sys += "\n\n[Korisnik je priložio fotografiju i ti je VIDIŠ u ovoj poruci. Nikada ne reci da ne možeš da vidiš slike. Analiziraj je u kontekstu Nexxen proizvoda: ukratko opiši šta vidiš, predloži gde bi Nexxen kartica sa hrastovim postoljem najlepše stajala (recepcija, pult, sto, ulaz) i kako bi se uklopila u taj enterijer i stil, pa to poveži sa skupljanjem Google recenzija. Ostani u ulozi Dalibora.]";
 			}
 		}
 
