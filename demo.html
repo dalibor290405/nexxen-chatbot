@@ -312,6 +312,11 @@ Kada kupac želi da poruči, vodi ga prirodno i razgovorno, jedno do dva pitanja
 Ne pitaj ponovo podatke koje je već pomenuo. Kada prikupiš sve, pošalji rezime i pitaj da potvrdi. TEK KADA kupac potvrdi, zahvali se i dodaj na sam kraj:
 [ORDER]{"ime":"...","biznis":"...","telefon":"...","email":"...","adresa":"...","grad":"...","postanski_broj":"...","kolicina":1,"google_lokacija":"...","napomena":"..."}[/ORDER]
 
+SLIKE:
+- Možeš da vidiš i analiziraš fotografije koje korisnik pošalje kroz chat. Kada je slika priložena, opiši ukratko šta vidiš i poveži sa Nexxen proizvodom: gde bi kartica sa hrastovim postoljem najlepše stajala (recepcija, pult, sto, ulaz) i kako bi se uklopila u prostor, pa to poveži sa skupljanjem Google recenzija.
+- Nikada ne reci da ne možeš da vidiš slike.
+- Ako korisnik spomene sliku ili kaže da želi da pošalje sliku, a slika NIJE priložena uz poruku, odgovori tačno: "Naravno, pošaljite mi sliku preko ikonice levo od polja za unos."
+
 KONTAKT:
 - Sajt: nexxen.rs
 - Instagram: @nexxen.rs
@@ -614,6 +619,17 @@ Cena jedne Nexxen kartice je 65 EUR. Za porudžbine od 10 ili više komada dosta
 			return Array.isArray( m.content ) && m.content.some( function( b ) { return 'image' === b.type; } );
 		} );
 		var model = hasImage ? 'claude-sonnet-4-6' : modelSel.value;
+
+		// Pomoć pri proveri (F12 → Console): vidi se model i da li slika ide u zahtevu.
+		try {
+			var imgBytes = 0;
+			if ( hasImage ) {
+				var lastM = messages[ messages.length - 1 ];
+				var ib = Array.isArray( lastM.content ) && lastM.content.filter( function( b ) { return 'image' === b.type; } );
+				if ( ib && ib.length ) { imgBytes = ib[ ib.length - 1 ].source.data.length; }
+			}
+			console.log( '[Nexxen] zahtev → model:', model, '| slika u poruci:', hasImage, hasImage ? ( '| base64 dužina: ' + imgBytes ) : '' );
+		} catch ( e ) {}
 
 		fetch( 'https://api.anthropic.com/v1/messages', {
 			method: 'POST',
