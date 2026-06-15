@@ -148,45 +148,51 @@ body { margin: 0; font-family: var(--nx-font); color: var(--nx-text); background
 
 /* Polje za unos */
 .nexxen-input-bar { display: flex; align-items: flex-end; gap: 6px; padding: 12px; background: #fff; border-top: 1px solid var(--nx-line); flex-shrink: 0; }
-.nexxen-tools { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
-.nexxen-tool { background: none; border: none; cursor: pointer; padding: 7px; border-radius: 50%; color: var(--nx-muted); display: flex; align-items: center; justify-content: center; font-family: inherit; font-size: 11px; font-weight: 600; letter-spacing: .03em; min-width: 30px; height: 34px; }
+.nexxen-tools { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.nexxen-tool { background: none; border: none; cursor: pointer; width: 38px; height: 38px; border-radius: 50%; color: var(--nx-muted); display: flex; align-items: center; justify-content: center; padding: 0; flex-shrink: 0; }
 .nexxen-tool:hover { background: var(--nx-surface); color: var(--nx-text); }
-.nexxen-tool svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.nexxen-mic-active { color: #fff; background: #e23b3b; }
-.nexxen-mic-active:hover { background: #c92f2f; color: #fff; }
+.nexxen-tool svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.nexxen-mic-active, .nexxen-mic-active:hover { color: #fff; background: #e23b3b; }
 
 /* Emoji birač */
 .nexxen-emoji-panel { display: flex; flex-wrap: wrap; gap: 2px; max-height: 168px; overflow-y: auto; padding: 8px 10px; border-top: 1px solid var(--nx-line); background: #fff; }
 .nexxen-emoji-item { background: none; border: none; cursor: pointer; font-size: 20px; line-height: 1; padding: 5px; border-radius: 8px; }
 .nexxen-emoji-item:hover { background: var(--nx-surface); }
 
-/* GIF panel */
-.nexxen-gif-panel { padding: 10px; border-top: 1px solid var(--nx-line); background: #fff; }
-.nexxen-gif-search { width: 100%; border: 1px solid var(--nx-line); border-radius: 999px; padding: 8px 14px; font-family: inherit; font-size: 14px; outline: none; color: var(--nx-text); }
-.nexxen-gif-search:focus { border-color: var(--nx-accent); }
-.nexxen-gif-results { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; max-height: 200px; overflow-y: auto; margin-top: 8px; }
-.nexxen-gif-item { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; background: var(--nx-surface); }
-.nexxen-gif-item:hover { opacity: .85; }
-.nexxen-gif-note { color: var(--nx-muted); font-size: 13px; padding: 10px; text-align: center; }
-
 /* Kratka poruka u widgetu (toast) */
-.nexxen-toast { position: absolute; left: 12px; right: 12px; bottom: 74px; background: var(--nx-text); color: #fff; font-size: 13px; padding: 9px 12px; border-radius: 10px; text-align: center; z-index: 5; opacity: .96; }
-.nexxen-input { flex: 1; resize: none; border: none; background: var(--nx-surface); border-radius: 22px; padding: 11px 16px; font-family: inherit; font-size: 15px; line-height: 1.4; max-height: 120px; outline: none; color: var(--nx-text); }
+.nexxen-toast { position: absolute; left: 12px; right: 12px; bottom: 76px; background: var(--nx-text); color: #fff; font-size: 13px; padding: 9px 12px; border-radius: 10px; text-align: center; z-index: 5; opacity: .96; }
+
+/* Polje za unos */
+.nexxen-input { flex: 1; resize: none; border: none; background: var(--nx-surface); border-radius: 22px; padding: 10px 16px; font-family: inherit; font-size: 15px; line-height: 1.4; max-height: 120px; min-height: 38px; outline: none; color: var(--nx-text); }
 .nexxen-input::placeholder { color: var(--nx-muted); }
-.nexxen-send { background: var(--nx-accent); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; }
+.nexxen-send { background: var(--nx-accent); border: none; border-radius: 50%; width: 38px; height: 38px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; }
 .nexxen-send svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .nexxen-send:hover { filter: brightness(1.06); }
 .nexxen-send:disabled { opacity: .5; cursor: not-allowed; }
 
 @media (max-width: 480px) { .nexxen-panel { right: 10px; left: 10px; bottom: 84px; width: auto; height: calc(100vh - 104px); } }
 
+/* Tizer oblačić pored launcher dugmeta */
+.nexxen-teaser { position: fixed; right: 24px; bottom: 96px; max-width: 232px; background: #fff; color: var(--nx-text); border: 1px solid var(--nx-line); border-radius: 16px; padding: 12px 34px 12px 15px; font-family: var(--nx-font); font-size: 14px; line-height: 1.45; box-shadow: 0 10px 30px rgba(18,17,16,.12); cursor: pointer; z-index: 999998; animation: nexxen-teaser-in .45s ease both, nexxen-teaser-glow 3.4s ease-in-out .8s infinite; }
+.nexxen-teaser-x { position: absolute; top: 7px; right: 9px; background: none; border: none; color: var(--nx-muted); font-size: 16px; line-height: 1; cursor: pointer; padding: 2px; }
+.nexxen-teaser-x:hover { color: var(--nx-text); }
+@keyframes nexxen-teaser-in { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes nexxen-teaser-glow { 0%, 100% { box-shadow: 0 10px 30px rgba(18,17,16,.12); } 50% { box-shadow: 0 12px 34px rgba(48,111,219,.30); } }
 
-/* Ocena usluge (posle neaktivnosti) */
-.nexxen-rating { position: fixed; right: 24px; bottom: 96px; width: 300px; max-width: calc(100vw - 40px); background: #fff; border: 1px solid var(--nx-line); border-radius: var(--nx-r-card); box-shadow: 0 20px 60px rgba(18,17,16,.16); padding: 18px 16px; text-align: center; z-index: 999999; font-family: var(--nx-font); }
-.nexxen-rating-title { font-size: 14px; font-weight: 600; color: var(--nx-text); margin-bottom: 12px; }
-.nexxen-rating-row { display: flex; justify-content: center; gap: 4px; }
-.nexxen-rating-btn { background: none; border: none; cursor: pointer; font-size: 26px; line-height: 1; padding: 4px; border-radius: 8px; transition: transform .12s ease; }
-.nexxen-rating-btn:hover { transform: scale(1.25); background: var(--nx-surface); }
+/* Ocena usluge (skala 1-10 + komentar) */
+.nexxen-rating { position: fixed; right: 24px; bottom: 96px; width: 330px; max-width: calc(100vw - 40px); background: #fff; border: 1px solid var(--nx-line); border-radius: var(--nx-r-card); box-shadow: 0 20px 60px rgba(18,17,16,.16); padding: 20px 18px; z-index: 999999; font-family: var(--nx-font); }
+.nexxen-rating-title { font-size: 15px; font-weight: 600; color: var(--nx-text); margin: 0 0 14px; text-align: center; }
+.nexxen-rating-scale { display: flex; gap: 4px; }
+.nexxen-rating-num { flex: 1; height: 34px; border: 1px solid var(--nx-line); background: #fff; color: var(--nx-text); border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px; padding: 0; }
+.nexxen-rating-num:hover { border-color: var(--nx-accent); }
+.nexxen-rating-sel { background: var(--nx-accent); border-color: var(--nx-accent); color: #fff; }
+.nexxen-rating-legend { display: flex; justify-content: space-between; font-size: 11px; color: var(--nx-muted); margin: 7px 2px 0; }
+.nexxen-rating-text { width: 100%; margin-top: 14px; border: 1px solid var(--nx-line); border-radius: 12px; padding: 10px 12px; font-family: inherit; font-size: 14px; line-height: 1.4; resize: none; outline: none; color: var(--nx-text); box-sizing: border-box; }
+.nexxen-rating-text:focus { border-color: var(--nx-accent); }
+.nexxen-rating-submit { width: 100%; margin-top: 12px; background: var(--nx-accent); color: #fff; border: none; border-radius: 999px; padding: 11px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.nexxen-rating-submit:hover { filter: brightness(1.06); }
+.nexxen-rating-close { position: absolute; top: 10px; right: 12px; background: none; border: none; color: var(--nx-muted); font-size: 18px; line-height: 1; cursor: pointer; padding: 2px; }
+.nexxen-rating-close:hover { color: var(--nx-text); }
 </style>
 </head>
 <body>
@@ -305,7 +311,6 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 
 	var FALLBACK = "dalibor290405@gmail.com";
 	var INSTAGRAM_URL = "https://instagram.com/nexxen.rs";
-	var GIPHY_API_KEY = ""; // Besplatan GIPHY API ključ za GIF pretragu (ostavite prazno ako ne koristite).
 	var IDLE_NUDGE_MS = 5 * 60 * 1000; // 5 min do nenametljivog podsetnika (smanjite za test)
 	var IDLE_CLOSE_MS = 3 * 60 * 1000; // još 3 min do zatvaranja + ocene usluge
 
@@ -319,6 +324,8 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 	var pendingImage = null;    // {media_type, data, dataUrl, name}
 	var inactivityTimer = null;
 	var closeTimer = null;
+	var teaserDismissed = false;   // tizer oblačić zatvoren/odbijen
+	var ratingShown = false;       // ocena prikazana za tekući razgovor
 	var els = {};
 
 	/* --- Profilna slika (avatar) ---
@@ -337,7 +344,17 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 	var orderPanel = document.getElementById( 'demo-order' );
 	var orderJson  = document.getElementById( 'demo-order-json' );
 
-	promptEl.value = DEFAULT_PROMPT;
+	/* --- Sistem-prompt: živi izvor je polje (Zadatak 7) ---
+	   Učitaj poslednji sačuvani prompt iz localStorage, inače podrazumevani.
+	   Svaka izmena se odmah pamti; nema dugmeta "Sačuvaj"; buildSystem() uvek
+	   čita trenutnu vrednost polja, pa nova vrednost važi odmah za sledeću poruku. */
+	try {
+		var savedPrompt = localStorage.getItem( 'nexxen_demo_prompt' );
+		promptEl.value = ( savedPrompt !== null && savedPrompt !== '' ) ? savedPrompt : DEFAULT_PROMPT;
+	} catch ( e ) { promptEl.value = DEFAULT_PROMPT; }
+	promptEl.addEventListener( 'input', function () {
+		try { localStorage.setItem( 'nexxen_demo_prompt', promptEl.value ); } catch ( e ) {}
+	} );
 
 	/* --- Pamćenje ključa u sessionStorage --- */
 	try { var saved = sessionStorage.getItem( 'nexxen_demo_key' ); if ( saved ) { keyInput.value = saved; } } catch ( e ) {}
@@ -391,7 +408,6 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 					'<button class="nexxen-attach-x" type="button" aria-label="Ukloni sliku">&times;</button>' +
 				'</div>' +
 				'<div class="nexxen-emoji-panel nexxen-hidden"></div>' +
-				'<div class="nexxen-gif-panel nexxen-hidden"></div>' +
 				'<div class="nexxen-input-bar">' +
 					'<div class="nexxen-tools">' +
 						'<button class="nexxen-tool nexxen-attach" type="button" aria-label="Priloži sliku" title="Priloži sliku">' +
@@ -400,7 +416,6 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 						'<button class="nexxen-tool nexxen-emoji-btn" type="button" aria-label="Emoji" title="Emoji">' +
 							'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M8.5 14.5s1.3 1.6 3.5 1.6 3.5-1.6 3.5-1.6"></path><line x1="9" y1="9.5" x2="9.01" y2="9.5"></line><line x1="15" y1="9.5" x2="15.01" y2="9.5"></line></svg>' +
 						'</button>' +
-						'<button class="nexxen-tool nexxen-gif-btn" type="button" aria-label="GIF" title="GIF">GIF</button>' +
 						'<button class="nexxen-tool nexxen-mic-btn" type="button" aria-label="Glasovni unos" title="Glasovni unos">' +
 							'<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0"></path><line x1="12" y1="18" x2="12" y2="22"></line></svg>' +
 						'</button>' +
@@ -408,6 +423,10 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 					'<textarea class="nexxen-input" rows="1" placeholder="Napišite poruku…" maxlength="1000"></textarea>' +
 					'<button class="nexxen-send" type="button" aria-label="Pošalji"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"></path></svg></button>' +
 				'</div>' +
+			'</div>' +
+			'<div class="nexxen-teaser nexxen-hidden">' +
+				'<span class="nexxen-teaser-text">Da li Vam je potrebna pomoć?</span>' +
+				'<button class="nexxen-teaser-x" type="button" aria-label="Zatvori">&times;</button>' +
 			'</div>';
 		document.body.appendChild( root );
 
@@ -420,15 +439,15 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 		els.send     = root.querySelector( '.nexxen-send' );
 		els.attach   = root.querySelector( '.nexxen-attach' );
 		els.emojiBtn = root.querySelector( '.nexxen-emoji-btn' );
-		els.gifBtn   = root.querySelector( '.nexxen-gif-btn' );
 		els.micBtn   = root.querySelector( '.nexxen-mic-btn' );
 		els.emojiPanel = root.querySelector( '.nexxen-emoji-panel' );
-		els.gifPanel   = root.querySelector( '.nexxen-gif-panel' );
 		els.preview  = root.querySelector( '.nexxen-attach-preview' );
 		els.previewImg   = root.querySelector( '.nexxen-attach-preview img' );
 		els.previewName  = root.querySelector( '.nexxen-attach-name' );
 		els.previewX     = root.querySelector( '.nexxen-attach-x' );
 		els.headerAvatar = root.querySelector( '.nexxen-avatar' );
+		els.teaser   = root.querySelector( '.nexxen-teaser' );
+		els.teaserX  = root.querySelector( '.nexxen-teaser-x' );
 		paintAvatar( els.headerAvatar );
 
 		els.bubble.addEventListener( 'click', togglePanel );
@@ -437,10 +456,19 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 		els.send.addEventListener( 'click', onSend );
 		els.attach.addEventListener( 'click', function() { fileInput.click(); } );
 		els.emojiBtn.addEventListener( 'click', toggleEmojiPanel );
-		els.gifBtn.addEventListener( 'click', toggleGifPanel );
 		els.micBtn.addEventListener( 'click', startVoice );
 		els.previewX.addEventListener( 'click', clearPendingImage );
 		fileInput.addEventListener( 'change', onFileChosen );
+
+		// Tizer oblačić: klik otvara chat; x ga zatvara (i pamti da je odbijen).
+		els.teaser.addEventListener( 'click', function () { if ( els.panel.classList.contains( 'nexxen-hidden' ) ) { togglePanel(); } } );
+		els.teaserX.addEventListener( 'click', function ( e ) { e.stopPropagation(); hideTeaser( true ); } );
+		// Pojavi se nekoliko sekundi po učitavanju, ako chat nije već otvoren.
+		setTimeout( function () {
+			if ( ! teaserDismissed && els.panel.classList.contains( 'nexxen-hidden' ) ) {
+				els.teaser.classList.remove( 'nexxen-hidden' );
+			}
+		}, 4000 );
 
 		els.input.addEventListener( 'keydown', function( e ) {
 			if ( 'Enter' === e.key && ! e.shiftKey ) { e.preventDefault(); onSend(); }
@@ -458,13 +486,21 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 		var opening = els.panel.classList.contains( 'nexxen-hidden' );
 		els.panel.classList.toggle( 'nexxen-hidden' );
 		if ( opening ) {
+			hideTeaser( true );
 			var r = document.querySelector( '.nexxen-rating' ); if ( r ) { r.remove(); }
 			if ( ! greeted ) { greet(); }     // pozdrav samo jednom
 			else { armInactivity(); }
 			els.input.focus();
 		} else {
 			clearInactivity();
+			// Korisnik sam zatvorio chat nakon razgovora -> ponudi ocenu.
+			if ( messages.length > 0 && ! ratingShown ) { endConversation(); }
 		}
+	}
+
+	function hideTeaser( dismiss ) {
+		if ( els.teaser ) { els.teaser.classList.add( 'nexxen-hidden' ); }
+		if ( dismiss ) { teaserDismissed = true; }
 	}
 
 	function greet() {
@@ -547,7 +583,6 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 		els.emojiPanel.setAttribute( 'data-built', '1' );
 	}
 	function toggleEmojiPanel() {
-		els.gifPanel.classList.add( 'nexxen-hidden' );
 		buildEmojiPanel();
 		els.emojiPanel.classList.toggle( 'nexxen-hidden' );
 	}
@@ -562,81 +597,6 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 		try { t.setSelectionRange( pos, pos ); } catch ( err ) {}
 		t.style.height = 'auto';
 		t.style.height = Math.min( t.scrollHeight, 120 ) + 'px';
-	}
-
-	/* ------------------------------------------------------------------ */
-	/* Toolbar: GIF (GIPHY API)                                            */
-	/* ------------------------------------------------------------------ */
-	function toggleGifPanel() {
-		els.emojiPanel.classList.add( 'nexxen-hidden' );
-		var opening = els.gifPanel.classList.contains( 'nexxen-hidden' );
-		els.gifPanel.classList.toggle( 'nexxen-hidden' );
-		if ( opening ) { buildGifPanel(); }
-	}
-	function buildGifPanel() {
-		els.gifPanel.innerHTML = '';
-		if ( ! GIPHY_API_KEY ) {
-			var note = document.createElement( 'div' );
-			note.className = 'nexxen-gif-note';
-			note.textContent = 'Dodajte GIPHY API ključ';
-			els.gifPanel.appendChild( note );
-			return;
-		}
-		var search = document.createElement( 'input' );
-		search.type = 'text';
-		search.className = 'nexxen-gif-search';
-		search.placeholder = ( lang === 'en' ) ? 'Search GIFs…' : 'Pretraži GIF-ove…';
-		var results = document.createElement( 'div' );
-		results.className = 'nexxen-gif-results';
-		els.gifPanel.appendChild( search );
-		els.gifPanel.appendChild( results );
-		var timer = null;
-		search.addEventListener( 'input', function () {
-			clearTimeout( timer );
-			var q = search.value.trim();
-			timer = setTimeout( function () { gifSearch( q, results ); }, 350 );
-		} );
-		search.focus();
-		gifSearch( '', results, true ); // u startu: trending
-	}
-	function gifSearch( q, results, trending ) {
-		var base = ( trending || ! q )
-			? 'https://api.giphy.com/v1/gifs/trending?api_key=' + encodeURIComponent( GIPHY_API_KEY ) + '&limit=12&rating=g'
-			: 'https://api.giphy.com/v1/gifs/search?api_key=' + encodeURIComponent( GIPHY_API_KEY ) + '&q=' + encodeURIComponent( q ) + '&limit=12&rating=g';
-		results.innerHTML = '<div class="nexxen-gif-note">' + ( lang === 'en' ? 'Loading…' : 'Učitavanje…' ) + '</div>';
-		fetch( base ).then( function ( r ) { return r.json(); } ).then( function ( j ) {
-			results.innerHTML = '';
-			var data = ( j && j.data ) ? j.data : [];
-			if ( ! data.length ) { results.innerHTML = '<div class="nexxen-gif-note">' + ( lang === 'en' ? 'No results.' : 'Nema rezultata.' ) + '</div>'; return; }
-			data.forEach( function ( g ) {
-				var im = g.images || {};
-				var thumb = im.fixed_width_small || im.fixed_width || im.downsized;
-				var full = im.downsized_medium || im.fixed_width || thumb;
-				if ( ! thumb || ! thumb.url ) { return; }
-				var el = document.createElement( 'img' );
-				el.className = 'nexxen-gif-item';
-				el.src = thumb.url; el.loading = 'lazy'; el.alt = 'GIF';
-				el.addEventListener( 'click', function () { addUserGif( ( full && full.url ) || thumb.url ); els.gifPanel.classList.add( 'nexxen-hidden' ); } );
-				results.appendChild( el );
-			} );
-		} ).catch( function () {
-			results.innerHTML = '<div class="nexxen-gif-note">' + ( lang === 'en' ? 'GIF search failed.' : 'GIF pretraga nije uspela.' ) + '</div>';
-		} );
-	}
-	// GIF se prikazuje u korisnikovom balonu, ali se NE šalje botu na analizu.
-	function addUserGif( url ) {
-		var row = document.createElement( 'div' );
-		row.className = 'nexxen-row nexxen-row-user';
-		var div = document.createElement( 'div' );
-		div.className = 'nexxen-msg nexxen-msg-user';
-		var img = document.createElement( 'img' );
-		img.className = 'nexxen-img';
-		img.src = url; img.alt = 'GIF';
-		div.appendChild( img );
-		row.appendChild( div );
-		els.messages.appendChild( row );
-		scrollDown();
-		clearInactivity(); armInactivity(); // korisnička aktivnost
 	}
 
 	/* ------------------------------------------------------------------ */
@@ -757,9 +717,8 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 		var text = ( els.input.value || '' ).trim();
 		if ( ! text && ! pendingImage ) { return; }
 
-		// Zatvori emoji/GIF panel ako su otvoreni.
+		// Zatvori emoji panel ako je otvoren.
 		if ( els.emojiPanel ) { els.emojiPanel.classList.add( 'nexxen-hidden' ); }
-		if ( els.gifPanel ) { els.gifPanel.classList.add( 'nexxen-hidden' ); }
 
 		// Detekcija engleskog (lepljivo — stavka 8).
 		if ( text && 'en' !== lang && detectEnglish( text ) ) { lang = 'en'; }
@@ -897,7 +856,7 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 				? 'Is there anything else I can help you with, or any question about the Nexxen card?'
 				: 'Da li Vam mogu pomoći još nečim, ili imate neko pitanje o Nexxen kartici?' );
 			// Ako ni posle podsetnika nema odgovora još 3 minuta, zatvori i ponudi ocenu.
-			closeTimer = setTimeout( idleClose, IDLE_CLOSE_MS );
+			closeTimer = setTimeout( endConversation, IDLE_CLOSE_MS );
 		}, IDLE_NUDGE_MS );
 	}
 	function clearInactivity() {
@@ -905,49 +864,88 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 		if ( closeTimer ) { clearTimeout( closeTimer ); closeTimer = null; }
 	}
 
-	// Posle produžene neaktivnosti: obriši razgovor, zatvori prozor, ponudi ocenu.
-	function idleClose() {
+	// Kraj razgovora (auto-zatvaranje posle neaktivnosti ili ručno zatvaranje
+	// nakon razgovora): obriši razgovor, zatvori prozor i ponudi ocenu usluge.
+	function endConversation() {
 		clearInactivity();
+		ratingShown = true;
 		messages = []; lang = 'sr'; greeted = false; nudged = false; instagramOffered = false;
 		clearPendingImage();
+		if ( els.emojiPanel ) { els.emojiPanel.classList.add( 'nexxen-hidden' ); }
 		els.messages.innerHTML = '';
 		orderPanel.hidden = true;
 		els.panel.classList.add( 'nexxen-hidden' );
 		showRating();
 	}
 
-	// Kratka ocena usluge sa emoji dugmićima (od nezadovoljnog do oduševljenog).
+	// Elegantan panel za ocenu: skala 1-10 + komentar + dugme "Pošalji ocenu".
 	function showRating() {
 		var ex = document.querySelector( '.nexxen-rating' );
 		if ( ex ) { ex.remove(); }
 		var card = document.createElement( 'div' );
 		card.className = 'nexxen-rating';
+
+		var close = document.createElement( 'button' );
+		close.type = 'button';
+		close.className = 'nexxen-rating-close';
+		close.setAttribute( 'aria-label', 'Zatvori' );
+		close.innerHTML = '&times;';
+		close.addEventListener( 'click', function () { card.remove(); } );
+		card.appendChild( close );
+
 		var title = document.createElement( 'div' );
 		title.className = 'nexxen-rating-title';
-		title.textContent = lang === 'en' ? 'How would you rate our service?' : 'Kako biste ocenili našu uslugu?';
+		title.textContent = ( lang === 'en' ) ? 'How would you rate our service?' : 'Kako biste ocenili našu uslugu?';
 		card.appendChild( title );
-		var row = document.createElement( 'div' );
-		row.className = 'nexxen-rating-row';
-		[ '😠', '🙁', '😐', '🙂', '🤩' ].forEach( function( em, i ) {
-			var b = document.createElement( 'button' );
-			b.type = 'button';
-			b.className = 'nexxen-rating-btn';
-			b.textContent = em;
-			b.setAttribute( 'aria-label', ( lang === 'en' ? 'Rating ' : 'Ocena ' ) + ( i + 1 ) );
-			b.addEventListener( 'click', function() { thankRating( card ); } );
-			row.appendChild( b );
-		} );
-		card.appendChild( row );
+
+		var scale = document.createElement( 'div' );
+		scale.className = 'nexxen-rating-scale';
+		var nums = [];
+		for ( var i = 1; i <= 10; i++ ) {
+			( function ( n ) {
+				var b = document.createElement( 'button' );
+				b.type = 'button';
+				b.className = 'nexxen-rating-num';
+				b.textContent = String( n );
+				b.addEventListener( 'click', function () {
+					nums.forEach( function ( x, idx ) { x.classList.toggle( 'nexxen-rating-sel', ( idx + 1 ) <= n ); } );
+				} );
+				nums.push( b );
+				scale.appendChild( b );
+			} )( i );
+		}
+		card.appendChild( scale );
+
+		var legend = document.createElement( 'div' );
+		legend.className = 'nexxen-rating-legend';
+		legend.innerHTML = ( lang === 'en' )
+			? '<span>1 · poor</span><span>10 · excellent</span>'
+			: '<span>1 · loše</span><span>10 · odlično</span>';
+		card.appendChild( legend );
+
+		var ta = document.createElement( 'textarea' );
+		ta.className = 'nexxen-rating-text';
+		ta.rows = 3;
+		ta.placeholder = ( lang === 'en' ) ? 'What did you like, and what could we improve?' : 'Šta Vam se dopalo, a šta bismo mogli da poboljšamo?';
+		card.appendChild( ta );
+
+		var submit = document.createElement( 'button' );
+		submit.type = 'button';
+		submit.className = 'nexxen-rating-submit';
+		submit.textContent = ( lang === 'en' ) ? 'Submit rating' : 'Pošalji ocenu';
+		submit.addEventListener( 'click', function () { thankRating( card ); } );
+		card.appendChild( submit );
+
 		document.body.appendChild( card );
 	}
 	function thankRating( card ) {
 		card.innerHTML = '';
 		var t = document.createElement( 'div' );
 		t.className = 'nexxen-rating-title';
-		t.style.marginBottom = '0';
-		t.textContent = lang === 'en' ? 'Thank you for your feedback!' : 'Hvala Vam na oceni!';
+		t.style.margin = '0';
+		t.textContent = ( lang === 'en' ) ? 'Thank you for your feedback.' : 'Hvala Vam na povratnoj informaciji.';
 		card.appendChild( t );
-		setTimeout( function() { if ( card.parentNode ) { card.parentNode.removeChild( card ); } }, 3500 );
+		setTimeout( function () { if ( card.parentNode ) { card.parentNode.removeChild( card ); } }, 3500 );
 	}
 
 	/* ------------------------------------------------------------------ */
