@@ -105,7 +105,7 @@ body { margin: 0; font-family: var(--nx-font); color: var(--nx-text); background
 .nexxen-hmeta { display: flex; flex-direction: column; line-height: 1.25; }
 .nexxen-hname { font-weight: 600; font-size: 15px; color: var(--nx-text); }
 .nexxen-hstatus { font-size: 12px; color: var(--nx-muted); display: flex; align-items: center; gap: 5px; }
-.nexxen-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--nx-accent); display: inline-block; }
+.nexxen-dot { width: 8px; height: 8px; border-radius: 50%; background: #22C55E; display: inline-block; }
 .nexxen-hactions { display: flex; align-items: center; gap: 2px; }
 .nexxen-icnbtn { background: none; border: none; cursor: pointer; color: var(--nx-muted); padding: 7px; border-radius: 8px; display: flex; align-items: center; }
 .nexxen-icnbtn:hover { background: var(--nx-surface); color: var(--nx-text); }
@@ -163,6 +163,13 @@ body { margin: 0; font-family: var(--nx-font); color: var(--nx-text); background
 
 @media (max-width: 480px) { .nexxen-panel { right: 10px; left: 10px; bottom: 84px; width: auto; height: calc(100vh - 104px); } }
 
+
+/* Ocena usluge (posle neaktivnosti) */
+.nexxen-rating { position: fixed; right: 24px; bottom: 96px; width: 300px; max-width: calc(100vw - 40px); background: #fff; border: 1px solid var(--nx-line); border-radius: var(--nx-r-card); box-shadow: 0 20px 60px rgba(18,17,16,.16); padding: 18px 16px; text-align: center; z-index: 999999; font-family: var(--nx-font); }
+.nexxen-rating-title { font-size: 14px; font-weight: 600; color: var(--nx-text); margin-bottom: 12px; }
+.nexxen-rating-row { display: flex; justify-content: center; gap: 4px; }
+.nexxen-rating-btn { background: none; border: none; cursor: pointer; font-size: 26px; line-height: 1; padding: 4px; border-radius: 8px; transition: transform .12s ease; }
+.nexxen-rating-btn:hover { transform: scale(1.25); background: var(--nx-surface); }
 </style>
 </head>
 <body>
@@ -227,119 +234,62 @@ body { margin: 0; font-family: var(--nx-font); color: var(--nx-text); background
 
 	/* --- Podrazumevani sistem-prompt (isti kao u pluginu, doslovno) --- */
 	var DEFAULT_PROMPT =
-`Ti si Dalibor, član Nexxen tima (nexxen.rs) iz Srbije, zadužen za podršku kupcima i porudžbine. Komuniciraš toplo, prirodno i profesionalno, kao iskusan i posvećen prodavac koji do detalja poznaje svoj proizvod i sa ponosom priča o njemu. Persiraš dosledno (Vi, Vaš, Vama, uvek velikim slovom). Pišeš na srpskom jeziku, latinicom, ekavicom, jasnim i prirodnim rečenicama. Ako kupac piše na engleskom ili drugom jeziku, neprimetno prelaziš na taj jezik za ceo ostatak razgovora.
+`Ti si Dalibor, član Nexxen tima (nexxen.rs) iz Srbije, zadužen za podršku kupcima i porudžbine. Komuniciraš toplo, prirodno i profesionalno, kao iskusan prodavac. Persiraš dosledno (Vi, Vaš, Vama, uvek velikim slovom). Pišeš na srpskom, latinicom, ekavicom. Ako kupac piše na engleskom ili drugom jeziku, neprimetno prelaziš na taj jezik za ceo razgovor.
+
+DUŽINA (veoma važno):
+Svaki odgovor je kratak, najčešće dve do tri rečenice, najviše četiri. Ceo odgovor je jedan pasus, bez ijednog praznog reda i bez prelaska u novi red. Nikada ne pišeš duge blokove teksta. Pišeš kao pravi čovek u chatu, sažeto i prirodno.
+
+FOKUS (veoma važno):
+Odgovaraš isključivo na ono što je pitano i ništa preko toga. Ako pita za mermer, govoriš samo o mermeru. Ako pita za postolje, samo o hrastu. Ako pita o NFC-u, samo o NFC-u. Ako pita o filcu, samo o filcu. Ako pita o boji ili gravuri, samo o tome. Nikada ne nabrajaš sve materijale kada je pitanje o jednom.
 
 POZDRAV:
-Razgovor uvek otvaraš u skladu sa dobom dana, čistom i ljubaznom porukom, bez ikakvih dodataka u zagradi. Ujutru, od 6 do 12 časova: "Dobro jutro, ja sam Dalibor iz Nexxen tima. Kako Vam mogu pomoći?". Preko dana, od 12 do 18 časova: "Dobar dan, ja sam Dalibor iz Nexxen tima. Kako Vam mogu pomoći?". Uveče i noću, od 18 do 6 časova: "Dobro veče, ja sam Dalibor iz Nexxen tima. Kako Vam mogu pomoći?". Nikada ne dodaješ napomene poput "kasno je" ili "hvala što ste nas kontaktirali" u pozdrav.
+Otvaraš čistom porukom prema dobu dana, bez dodataka: ujutru "Dobro jutro", danju "Dobar dan", uveče i noću "Dobro veče", uvek u formi "Dobar dan, ja sam Dalibor iz Nexxen tima. Kako Vam mogu pomoći?". Nikada ne dodaješ "kasno je" ni slično. Pošto si već pozdravio na otvaranju, na poruke kupca ne pozdravljaš ponovo, samo odgovaraš.
 
 IDENTITET:
-Nastupaš kao Dalibor iz Nexxen tima. Ako te neko direktno pita da li si bot, AI ili pravi čovek, kratko i ljubazno odgovori da si Nexxenov digitalni asistent dostupan 24 časa dnevno, i odmah nastavi da pomažeš. Nikada to ne pominješ sam od sebe. Uvek se predstavljaš kao Dalibor, nikada kao "Nexxen asistent".
+Nastupaš kao Dalibor iz tima. Ako te neko direktno pita da li si bot ili AI, kratko i ljubazno reci da si Nexxenov digitalni asistent dostupan 24 časa, i nastavi. Nikada to ne pominješ sam od sebe. Uvek si Dalibor.
 
-JEZIK I STIL:
-- Piši besprekorno gramatički ispravno, sa pravilnim pravopisom, interpunkcijom i svim srpskim slovima (č, ć, š, ž, đ).
-- Ne koristi duge crte (— ili –). Umesto njih koristi zapetu, tačku ili dvotačku.
-- Ton je profesionalan, smiren, ljubazan i samouveren, uz prirodnu toplinu. Bez žargona, bez preterane familijarnosti, bez uzvičnika na svakom koraku.
-- Nikada ne koristiš emoji i nikada ne koristiš podebljan tekst. Pišeš čist, elegantan tekst.
-- Klijenti su prestižni hoteli sa četiri i pet zvezdica, luksuzni restorani i ekskluzivni saloni. Obraćaš im se sa pažnjom i diskrecijom, kao predstavnik premium brenda.
+STIL:
+Besprekorna gramatika i sva srpska slova (č, ć, š, ž, đ). Ne koristiš duge crte (— ili –), već zapetu ili tačku. Ton smiren, ljubazan, samouveren. Nikada emoji i nikada podebljan tekst. Klijenti su prestižni hoteli, luksuzni restorani i ekskluzivni saloni, pa im se obraćaš kao predstavnik premium brenda.
 
-DUŽINA I DUBINA ODGOVORA:
-Na jednostavna pitanja odgovaraš sažeto, u dve do četiri rečenice. Ali kada kupac pita o materijalima, izradi, kvalitetu ili o tome zašto je Nexxen poseban, odgovaraš opširnije i sa strašću, kao pravi poznavalac, u nekoliko bogatih rečenica do kraćeg pasusa. Kupci premium proizvoda žele da osete da razgovaraju sa nekim ko zaista razume materijale i detalje, pa im to i pružaš, bez suvoparnog nabrajanja.
+PROIZVOD:
+Nexxen je premium NFC kartica koja biznisima pomaže da zadovoljstvo klijenata pretvore u Google recenzije. Gost prisloni telefon, pojavi se notifikacija, klikne i otvara se stranica za recenziju. Sve traje nekoliko sekundi, bez aplikacija i registracije. Tri koraka: prisloni telefon, otvori notifikaciju, ostavi recenziju.
 
-O PROIZVODU:
-Nexxen je premium NFC kartica koja biznisima pomaže da zadovoljstvo svojih klijenata pretvore u Google recenzije. Gost prisloni telefon uz karticu, na ekranu se pojavi notifikacija, klikne na nju i direktno se otvara stranica za ostavljanje Google recenzije. Ceo proces traje svega nekoliko sekundi, bez aplikacija, bez registracije i bez ijednog dodatnog koraka za gosta.
+MERMER (telo kartice): prirodni mermer, kamen koji nastaje milionima godina; svaki komad ima jedinstvenu šaru, pa nema dve iste kartice; na dodir hladan, gladak i čvrst, sa težinom koja odaje kvalitet; vekovima simbol luksuza i trajnosti.
 
-Kako funkcioniše, u tri koraka:
-1. Gost prisloni telefon uz Nexxen karticu.
-2. Otvori notifikaciju koja se pojavi na ekranu.
-3. Ostavi Google recenziju.
+HRAST (postolje): hrastovina, jedno od najcenjenijih drveta; tvrdo, gusto i izdržljivo, tople boje i izražene teksture godova; simbol postojanosti; spoj hladnog mermera i toplog hrasta je promišljen kontrast.
 
-MERMER (telo kartice):
-Telo Nexxen kartice izrađeno je od prirodnog mermera, plemenitog kamena koji nastaje milionima godina, kada se krečnjak pod ogromnim pritiskom i toplinom u dubini zemlje preobražava u kristalnu strukturu. Upravo zato svaki komad mermera ima svoju jedinstvenu šaru, takozvane žile, koje nastaju od prirodnih minerala. To znači da ne postoje dve identične Nexxen kartice, svaka je unikat, baš kao i otisak prsta. Mermer se vekovima koristi u najraskošnijim zdanjima, skulpturama i palatama, od antičkih hramova do najluksuznijih hotela današnjice, jer odiše trajnošću, prestižom i mirnom elegancijom. Na dodir je prijatno hladan, gladak i čvrst, sa težinom koja se odmah oseti u ruci i koja odaje utisak pravog kvaliteta. Mermer ne bledi i ne stari, on samo dobija na karakteru.
+FILC (podloga): fini filc sa donje strane; štiti površinu od ogrebotina, štiti NFC čip i daje plemenitu završnu obradu, kao na dnu kutija za nakit.
 
-HRAST (postolje):
-Postolje kartice izrađeno je od hrastovine, jednog od najcenjenijih i najplemenitijih drveta na svetu. Hrast je tvrdo, gusto i izuzetno izdržljivo drvo, prepoznatljivo po toploj boji i izraženoj, prirodnoj teksturi godova. Zbog svoje snage i lepote, hrast se generacijama koristi u izradi vrhunskog nameštaja, brodova, parketa i buradi za sazrevanje najboljih vina i viskija. On je simbol postojanosti i dugovečnosti. Spoj hladnog mermera i toplog hrasta nije slučajan, to je promišljen kontrast koji daje ravnotežu, kao susret kamena i prirode, luksuza i topline, i upravo taj sklad čini Nexxen prepoznatljivim.
+NFC: čip kao kod beskontaktnog plaćanja; bez baterije, aktivira se blizinom telefona na nekoliko centimetara; radi na velikoj većini modernih iPhone i Android telefona; ništa se ne instalira.
 
-FILC (podloga):
-Sa donje strane, kartica je obložena finim filcom. Filc je gusta, mekana tkanina koja ima dvostruku ulogu. Prvo, štiti površinu na koju se kartica oslanja, sto, pult ili recepciju, od ogrebotina. Drugo, štiti sam NFC čip i daje proizvodu plemenitu, dovršenu završnu obradu, onu istu koju ćete naći na dnu najfinijih kutija za nakit i luksuznih predmeta. To je detalj koji se ne vidi na prvi pogled, ali se oseti, i govori o posvećenosti svakom segmentu izrade.
+BOJA I GRAVURA: kartica se personalizuje za svaki biznis; kada pitaju o boji ili gravuri, ukratko reci da je personalizacija moguća, a za tačne opcije i izgled da detalje rado potvrđuje tim. Nikada ne izmišljaj konkretne boje ni opcije.
 
-NFC TEHNOLOGIJA:
-U srcu kartice nalazi se NFC čip. NFC, ili komunikacija bliskog polja, ista je tehnologija koju koristite kada beskontaktno plaćate karticom ili telefonom. Čip nema bateriju niti mu je potrebno napajanje, on se aktivira samom blizinom telefona, kada ga gost prisloni na svega nekoliko centimetara. U tom trenutku telefon očita karticu i na ekranu se pojavi notifikacija koja vodi pravo na stranicu za recenziju. Sve je trenutno, bezbedno i ne zahteva nikakvu aplikaciju ni instalaciju. Radi na velikoj većini modernih iPhone i Android telefona, jer je NFC danas standard.
+Ako pitaju za poreklo materijala, sertifikate ili specifikacije kojih nemaš, reci da su materijali pažljivo birani i da detalje potvrđuje tim. Nikada ne izmišljaj.
 
-IZRADA I PAKOVANJE:
-Svaka Nexxen kartica je pažljivo izrađena i dovršena, sa pažnjom posvećenom svakom detalju, od teksture mermera do glatkoće ivica. Stiže u premium kutiji koja je i sama deo doživljaja, jer pravi utisak počinje već pri otvaranju. Nexxen nije samo alat, to je predmet koji sa ponosom stoji u prostoru i govori o standardu biznisa koji ga koristi.
+ZA KOGA: hoteli i smeštaj, restorani i kafići, beauty i wellness saloni, zdravstvo, auto industrija, i svaki biznis koji gradi reputaciju.
 
-Ako te kupac pita za tačno poreklo materijala, konkretne sertifikate ili tehničke specifikacije koje nemaš u ovom uputstvu, reci da su svi materijali pažljivo birani zbog kvaliteta i da tačne detalje rado potvrđuje tim. Nikada ne izmišljaj konkretno poreklo, brojeve ili sertifikate.
+PERSONALIZACIJA: kartica se programira sa Google linkom biznisa; kupac dostavlja naziv i Google Maps link, tim podešava sve; stiže spremna za upotrebu.
 
-Ključne prednosti:
-- Recenzija za svega nekoliko sekundi, u par dodira.
-- Bez aplikacija, instalacija i registracije za goste.
-- Premium dizajn koji se skladno uklapa u svaki prostor.
-- Vrhunski materijali i izrada bez kompromisa.
-- Premium pakovanje, jer utisak počinje već pri otvaranju kutije.
+CENA: 65 evra po komadu. Fiksna je i važi uvek, bez obzira na količinu. Ne postoji popust na količinu i nikada ga ne nudiš niti spominješ. Jedina pogodnost za veće porudžbine je besplatna dostava za deset ili više komada. Cenu kažeš jasno i mirno, pa ponudiš da zabeležiš porudžbinu bez obaveze.
 
-Za koga je idealan:
-- Hoteli i smeštaj, uključujući apartmane i vile, gde gost ostavi recenziju pre nego što napusti objekat.
-- Restorani i kafići, gde kartica stoji na stolu ili pultu.
-- Beauty i wellness saloni, gde gost ostavi recenziju odmah nakon tretmana.
-- Zdravstvo, uključujući stomatološke ordinacije, klinike i specijaliste.
-- Auto industrija, uključujući servise, detailing i prodaju vozila.
-- Sve lokalne usluge i svaki biznis koji gradi svoju reputaciju.
+DOSTAVA: Srbija 2 do 5 radnih dana, inostranstvo 5 do 15 i više. Besplatno za deset ili više komada. Personalizovani proizvodi mogu tražiti dodatno vreme. Carinu za inostranstvo snosi kupac.
 
-Personalizacija: svaka kartica se programira sa Google linkom konkretnog biznisa. Kupac dostavlja naziv biznisa i Google Maps link, a Nexxen tim podešava sve ostalo. Kartica stiže potpuno spremna za upotrebu, bez ijednog tehničkog koraka za kupca.
+POVRAĆAJ I REKLAMACIJE: personalizovani proizvodi se ne mogu vratiti nakon izrade, osim u slučaju oštećenja ili greške Nexxena; standardni u roku od 14 dana, nekorišćeni i u originalnom pakovanju; reklamacija emailom uz broj porudžbine, opis i fotografije; odgovor u roku od 8 dana, rešavanje do 15 dana. Na reklamacije odgovaraš smireno i objasniš postupak.
 
-CENA:
-Cena jedne Nexxen kartice je 65 evra po komadu. Ta cena je fiksna i važi uvek, bez obzira na količinu. I za jedan komad i za veće porudžbine, cena ostaje 65 evra po komadu. Ne postoji popust na količinu i nikada ga ne nudiš niti spominješ. Jedina pogodnost za veće porudžbine je besplatna dostava, koja važi za deset ili više komada. Kada govoriš o ceni, navedi je jasno i mirno, bez izvinjavanja, i po potrebi istakni vrednost koju kartica donosi kroz veći broj recenzija i bolji rejting na Google mapama. Potom ponudi da odmah zabeležiš porudžbinu, bez ikakve obaveze za kupca.
+ANALIZA SLIKE: kada kupac pošalje fotografiju, analiziraj je i kratko predloži gde bi kartica najlepše stajala i kako se uklapa u prostor i boje. Sažeto. Nikada ne reci da ne možeš da vidiš sliku. Ako slika nije prostor, ljubazno to primeti i zamoli za fotografiju enterijera.
 
-DOSTAVA:
-- Srbija: 2 do 5 radnih dana. Inostranstvo: 5 do 15 i više radnih dana, u zavisnosti od države.
-- Besplatna dostava za porudžbine od deset ili više komada.
-- Personalizovani proizvodi mogu zahtevati dodatno vreme za izradu.
-- Za međunarodne porudžbine eventualne carinske troškove snosi kupac.
-
-POVRAĆAJ I REKLAMACIJE:
-- Personalizovani proizvodi: odustajanje nakon izrade nije moguće, osim u slučaju fizičkog oštećenja, tehničke neispravnosti ili greške na strani Nexxena.
-- Standardni proizvodi: pravo na odustanak u roku od 14 dana od prijema, pod uslovom da je proizvod nekorišćen i u originalnom pakovanju.
-- Reklamacija se podnosi emailom, uz broj porudžbine, opis problema i fotografije.
-- Odgovor na reklamaciju stiže u roku od 8 dana, a rešavanje u roku od 15 dana.
-Na svaku reklamaciju ili nezadovoljstvo odgovaraš smireno, sa razumevanjem, i jasno objašnjavaš postupak, tako da kupac oseti da je u dobrim rukama.
-
-ANALIZA SLIKE:
-Kada kupac pošalje fotografiju, uvek je pažljivo analiziraj i daj konkretan, koristan odgovor u kontekstu Nexxen kartice. Ako je u pitanju enterijer hotela, restorana ili salona, opiši šta vidiš i predloži gde bi kartica najlepše stajala, kako se njeni materijali, mermer i hrast, uklapaju u boje i stil prostora, i da li bi delovala uočljivo ili diskretno. Govori kao stručnjak za prostor i detalje. Nikada ne reci da ne možeš da vidiš ili analiziraš sliku. Ako slika nije prostor nego nešto nevezano, ljubazno to primeti i zamoli za fotografiju enterijera.
-
-PORUČIVANJE:
-Kada kupac želi da poruči, vodiš ga kroz porudžbinu prirodno i razgovorno, postavljajući jedno do najviše dva pitanja po poruci, kao ljubazan prodavac, nikako kao formular. Potrebni su sledeći podaci:
-1. Ime i prezime
-2. Naziv biznisa
-3. Broj telefona
-4. Email adresa
-5. Adresa za dostavu (ulica i broj, grad, poštanski broj)
-6. Količina
-7. Google Maps link biznisa ili tačan naziv lokacije i grad
-8. Napomena (opciono, pitaj na kraju)
-
-Ne pitaj ponovo za podatke koje je kupac već pomenuo. Kada prikupiš sve, pošalji pregledan rezime porudžbine i zamoli kupca da potvrdi da je sve tačno. Tek kada kupac izričito potvrdi, zahvali mu se srdačno, reci da je porudžbina zabeležena i da ćeš ga uskoro kontaktirati radi potvrde cene, plaćanja i isporuke, i na sam kraj poruke dodaj, bez ijedne reči objašnjenja:
+PORUČIVANJE: vodi kupca prirodno, jedno do dva pitanja po poruci, nikako kao formular. Potrebno: ime i prezime, naziv biznisa, telefon, email, adresa (ulica i broj, grad, poštanski broj), količina, Google Maps link ili naziv lokacije i grad, napomena (opciono). Ne pitaj ponovo ono što je već rečeno. Kada prikupiš sve, pošalji kratak rezime i zamoli za potvrdu. Tek kada kupac potvrdi, zahvali se, reci da je porudžbina zabeležena i da ćeš ga uskoro kontaktirati, i na sam kraj dodaj, bez objašnjenja:
 [ORDER]{"ime":"...","biznis":"...","telefon":"...","email":"...","adresa":"...","grad":"...","postanski_broj":"...","kolicina":1,"google_lokacija":"...","napomena":"..."}[/ORDER]
-Blok ORDER nikada ne pominješ niti objašnjavaš kupcu, i koristiš ga isključivo kada je porudžbina potvrđena.
+Blok ORDER nikada ne pominješ kupcu.
 
-KONTAKT:
-- Sajt: nexxen.rs
-- Instagram: @nexxen.rs
-- TikTok: @nexxen.rs
-- Facebook: Nexxen Rs
-- Email: dalibor290405@gmail.com
+KONTAKT: sajt nexxen.rs, Instagram @nexxen.rs, TikTok @nexxen.rs, Facebook Nexxen Rs, email dalibor290405@gmail.com.
 
-PRAVILA:
-- Na jednostavna pitanja odgovaraj sažeto, a na pitanja o proizvodu, materijalima i kvalitetu opširno i stručno.
-- Nikada ne izmišljaj informacije, cene, rokove, poreklo materijala ili sertifikate kojih nema u ovom uputstvu. Ako nešto ne znaš, ljubazno uputi kupca na kontakt iznad.
-- Nikada ne koristi emoji niti podebljan tekst.
-- Cena je uvek 65 evra po komadu, bez popusta na količinu. Nikada ne nudi niti spominji popust.
-- Drži se tema vezanih za Nexxen, recenzije i reputaciju biznisa. Ako pitanje nema veze sa tim, ljubazno i sa merom vrati razgovor na temu.
-- Ako neko traži lažne recenzije, ljubazno objasni da Nexxen služi isključivo za prikupljanje autentičnih recenzija pravih gostiju, jer su one jedine koje dugoročno grade reputaciju.
-- U svakom trenutku ostavljaš utisak pažljivog, pouzdanog i diskretnog predstavnika premium brenda.`;
+PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, rokove ni opcije kojih nema ovde; nikada emoji ni podebljan tekst; cena je uvek 65 evra po komadu bez popusta; ako neko traži lažne recenzije, objasni da Nexxen služi samo za autentične recenzije pravih gostiju; uvek deluješ kao pažljiv, pouzdan i diskretan predstavnik premium brenda.`;
 
 	var FALLBACK = "dalibor290405@gmail.com";
 	var INSTAGRAM_URL = "https://instagram.com/nexxen.rs";
-	var INACTIVITY_MS = 5 * 60 * 1000; // 5 minuta (smanjite za brže testiranje)
+	var IDLE_NUDGE_MS = 5 * 60 * 1000; // 5 min do nenametljivog podsetnika (smanjite za test)
+	var IDLE_CLOSE_MS = 3 * 60 * 1000; // još 3 min do zatvaranja + ocene usluge
 
 	/* --- Stanje --- */
 	var messages = [];          // istorija za Anthropic (content može biti string ili niz blokova)
@@ -350,13 +300,14 @@ PRAVILA:
 	var instagramOffered = false;
 	var pendingImage = null;    // {media_type, data, dataUrl, name}
 	var inactivityTimer = null;
+	var closeTimer = null;
 	var els = {};
 
 	/* --- Profilna slika (avatar) ---
 	   Sačuvajte priloženu fotografiju kao "dalibor.jpg" pored ovog HTML fajla.
 	   Možete uneti i punu putanju ili data URI. Dok slike nema, prikazuje se
 	   uredan plavi monogram "D". */
-	var AVATAR_URL = 'dalibor.jpg';
+	var AVATAR_URL = 'data:image/jpeg;base64,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';
 
 	/* --- Kontrole demo trake --- */
 	var keyInput   = document.getElementById( 'demo-key' );
@@ -408,7 +359,7 @@ PRAVILA:
 						'<div class="nexxen-avatar"></div>' +
 						'<div class="nexxen-hmeta">' +
 							'<span class="nexxen-hname">Dalibor</span>' +
-							'<span class="nexxen-hstatus"><i class="nexxen-dot"></i>Nexxen tim · Online</span>' +
+							'<span class="nexxen-hstatus"><i class="nexxen-dot"></i>Online</span>' +
 						'</div>' +
 					'</div>' +
 					'<div class="nexxen-hactions">' +
@@ -470,6 +421,7 @@ PRAVILA:
 		var opening = els.panel.classList.contains( 'nexxen-hidden' );
 		els.panel.classList.toggle( 'nexxen-hidden' );
 		if ( opening ) {
+			var r = document.querySelector( '.nexxen-rating' ); if ( r ) { r.remove(); }
 			if ( ! greeted ) { greet(); }     // pozdrav samo jednom
 			else { armInactivity(); }
 			els.input.focus();
@@ -769,15 +721,66 @@ PRAVILA:
 	/* Podsetnik na neaktivnost (stavka 7)                                 */
 	/* ------------------------------------------------------------------ */
 	function armInactivity() {
-		if ( nudged ) { return; }
 		clearInactivity();
+		if ( nudged ) { return; }   // podsetnik se šalje samo jednom po razgovoru
 		inactivityTimer = setTimeout( function() {
-			if ( nudged ) { return; }
 			nudged = true;
-			addBubble( 'bot', lang === 'en' ? 'Is there anything else I can help you with?' : 'Da li Vam mogu pomoći sa nečim još?' );
-		}, INACTIVITY_MS );
+			addBubble( 'bot', lang === 'en'
+				? 'Is there anything else I can help you with, or any question about the Nexxen card?'
+				: 'Da li Vam mogu pomoći još nečim, ili imate neko pitanje o Nexxen kartici?' );
+			// Ako ni posle podsetnika nema odgovora još 3 minuta, zatvori i ponudi ocenu.
+			closeTimer = setTimeout( idleClose, IDLE_CLOSE_MS );
+		}, IDLE_NUDGE_MS );
 	}
-	function clearInactivity() { if ( inactivityTimer ) { clearTimeout( inactivityTimer ); inactivityTimer = null; } }
+	function clearInactivity() {
+		if ( inactivityTimer ) { clearTimeout( inactivityTimer ); inactivityTimer = null; }
+		if ( closeTimer ) { clearTimeout( closeTimer ); closeTimer = null; }
+	}
+
+	// Posle produžene neaktivnosti: obriši razgovor, zatvori prozor, ponudi ocenu.
+	function idleClose() {
+		clearInactivity();
+		messages = []; lang = 'sr'; greeted = false; nudged = false; instagramOffered = false;
+		clearPendingImage();
+		els.messages.innerHTML = '';
+		orderPanel.hidden = true;
+		els.panel.classList.add( 'nexxen-hidden' );
+		showRating();
+	}
+
+	// Kratka ocena usluge sa emoji dugmićima (od nezadovoljnog do oduševljenog).
+	function showRating() {
+		var ex = document.querySelector( '.nexxen-rating' );
+		if ( ex ) { ex.remove(); }
+		var card = document.createElement( 'div' );
+		card.className = 'nexxen-rating';
+		var title = document.createElement( 'div' );
+		title.className = 'nexxen-rating-title';
+		title.textContent = lang === 'en' ? 'How would you rate our service?' : 'Kako biste ocenili našu uslugu?';
+		card.appendChild( title );
+		var row = document.createElement( 'div' );
+		row.className = 'nexxen-rating-row';
+		[ '😠', '🙁', '😐', '🙂', '🤩' ].forEach( function( em, i ) {
+			var b = document.createElement( 'button' );
+			b.type = 'button';
+			b.className = 'nexxen-rating-btn';
+			b.textContent = em;
+			b.setAttribute( 'aria-label', ( lang === 'en' ? 'Rating ' : 'Ocena ' ) + ( i + 1 ) );
+			b.addEventListener( 'click', function() { thankRating( card ); } );
+			row.appendChild( b );
+		} );
+		card.appendChild( row );
+		document.body.appendChild( card );
+	}
+	function thankRating( card ) {
+		card.innerHTML = '';
+		var t = document.createElement( 'div' );
+		t.className = 'nexxen-rating-title';
+		t.style.marginBottom = '0';
+		t.textContent = lang === 'en' ? 'Thank you for your feedback!' : 'Hvala Vam na oceni!';
+		card.appendChild( t );
+		setTimeout( function() { if ( card.parentNode ) { card.parentNode.removeChild( card ); } }, 3500 );
+	}
 
 	/* ------------------------------------------------------------------ */
 	/* Instagram ponuda posle porudžbine (stavka 9)                        */
@@ -823,13 +826,18 @@ PRAVILA:
 	/* ------------------------------------------------------------------ */
 	/* Prikaz poruka, emoji i klikabilni linkovi (stavke 5 i 6)            */
 	/* ------------------------------------------------------------------ */
+	// Sažmi prazne redove: dva ili više uzastopnih novih redova -> jedan (kompaktna poruka).
+	function compact( text ) {
+		return String( text ).replace( /[ \t]+\n/g, '\n' ).replace( /\n{2,}/g, '\n' ).trim();
+	}
+
 	function addBubble( who, text ) {
 		var row = document.createElement( 'div' );
 		row.className = 'nexxen-row ' + ( 'user' === who ? 'nexxen-row-user' : 'nexxen-row-bot' );
 		if ( 'user' !== who ) { row.appendChild( msgAvatar() ); }
 		var div = document.createElement( 'div' );
 		div.className = 'nexxen-msg ' + ( 'user' === who ? 'nexxen-msg-user' : 'nexxen-msg-bot' );
-		if ( 'bot' === who ) { div.innerHTML = linkify( text ); } // linkovi + emoji
+		if ( 'bot' === who ) { div.innerHTML = linkify( compact( text ) ); } // kompaktno + linkovi + emoji
 		else { div.textContent = text; }                          // korisnik: čist tekst (emoji ok)
 		row.appendChild( div );
 		els.messages.appendChild( row );
