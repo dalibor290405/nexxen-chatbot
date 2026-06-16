@@ -88,7 +88,7 @@ body { margin: 0; font-family: var(--nx-font); color: var(--nx-text); background
 .nexxen-widget, .nexxen-widget * { box-sizing: border-box; }
 
 /* Launcher */
-.nexxen-bubble { position: fixed; right: 24px; bottom: 24px; width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer; background: var(--nx-accent); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(48,111,219,.40); z-index: 999999; transition: transform .15s ease; animation: nexxen-bubble-pulse 2.6s ease-out infinite; }
+.nexxen-bubble { position: fixed; right: 24px; bottom: 24px; width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer; background: var(--nx-accent); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(48,111,219,.40); z-index: 999999; transition: transform .15s ease; animation: nexxen-bubble-pulse 1.8s ease-out infinite; }
 .nexxen-bubble:hover { transform: scale(1.06); }
 .nexxen-bubble svg { width: 26px; height: 26px; fill: #fff; }
 .nexxen-bubble-still { animation: none; box-shadow: 0 8px 24px rgba(48,111,219,.40); }
@@ -126,7 +126,7 @@ body { margin: 0; font-family: var(--nx-font); color: var(--nx-text); background
 .nexxen-msg-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .nexxen-msg-avatar.nexxen-avatar-mono { background: var(--nx-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; }
 .nexxen-msg { max-width: 80%; padding: 11px 14px; border-radius: var(--nx-r-msg); word-wrap: break-word; overflow-wrap: anywhere; white-space: pre-wrap; }
-.nexxen-msg-bot { background: var(--nx-surface); color: var(--nx-text); border-bottom-left-radius: 6px; }
+.nexxen-msg-bot { background: #fff; color: var(--nx-text); border: 1px solid var(--nx-line); border-bottom-left-radius: 6px; }
 .nexxen-msg-user { background: var(--nx-accent); color: #fff; border-bottom-right-radius: 6px; }
 .nexxen-msg-bot a { color: var(--nx-accent); font-weight: 500; text-decoration: underline; }
 .nexxen-msg-user a { color: #fff; text-decoration: underline; }
@@ -140,7 +140,7 @@ body { margin: 0; font-family: var(--nx-font); color: var(--nx-text); background
 /* (quick reply dugmići uklonjeni) */
 
 /* Kuca... */
-.nexxen-typing { display: flex; gap: 4px; padding: 13px 15px; background: var(--nx-surface); border-radius: var(--nx-r-msg); border-bottom-left-radius: 6px; }
+.nexxen-typing { display: flex; gap: 4px; padding: 13px 15px; background: #fff; border: 1px solid var(--nx-line); border-radius: var(--nx-r-msg); border-bottom-left-radius: 6px; }
 .nexxen-typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--nx-muted); animation: nexxen-blink 1.2s infinite both; }
 .nexxen-typing span:nth-child(2) { animation-delay: .2s; }
 .nexxen-typing span:nth-child(3) { animation-delay: .4s; }
@@ -179,14 +179,15 @@ body { margin: 0; font-family: var(--nx-font); color: var(--nx-text); background
 @media (max-width: 480px) { .nexxen-panel { right: 10px; left: 10px; bottom: 84px; width: auto; height: calc(100vh - 104px); } }
 
 /* Tizer oblačić pored launcher dugmeta */
-.nexxen-teaser { position: fixed; right: 24px; bottom: 96px; max-width: 250px; display: flex; align-items: center; gap: 10px; background: #fff; color: var(--nx-text); border: 1px solid var(--nx-line); border-radius: 18px; padding: 11px 34px 11px 11px; font-family: var(--nx-font); font-size: 14px; line-height: 1.4; box-shadow: 0 10px 30px rgba(18,17,16,.12); cursor: pointer; z-index: 999998; transform-origin: bottom right; animation: nexxen-teaser-in .45s ease both, nexxen-teaser-glow 3.6s ease-in-out .8s infinite; }
+.nexxen-teaser { position: fixed; right: 24px; bottom: 86px; max-width: 250px; display: flex; align-items: center; gap: 10px; background: #fff; color: var(--nx-text); border: 1px solid var(--nx-line); border-radius: 18px; padding: 11px 34px 11px 11px; font-family: var(--nx-font); font-size: 14px; line-height: 1.4; box-shadow: 0 10px 30px rgba(18,17,16,.12); cursor: pointer; z-index: 999998; transform-origin: bottom right; animation: nexxen-teaser-in .42s cubic-bezier(.34,1.32,.5,1) both, nexxen-teaser-glow 3.6s ease-in-out 1s infinite; }
+.nexxen-teaser::after { content: ''; position: absolute; right: 24px; bottom: -6px; width: 12px; height: 12px; background: #fff; border-right: 1px solid var(--nx-line); border-bottom: 1px solid var(--nx-line); transform: rotate(45deg); }
 .nexxen-teaser-avatar { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--nx-surface); }
 .nexxen-teaser-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .nexxen-teaser-avatar.nexxen-avatar-mono { background: var(--nx-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; }
 .nexxen-teaser-text { flex: 1; }
 .nexxen-teaser-x { position: absolute; top: 6px; right: 9px; background: none; border: none; color: var(--nx-muted); font-size: 16px; line-height: 1; cursor: pointer; padding: 2px; }
 .nexxen-teaser-x:hover { color: var(--nx-text); }
-@keyframes nexxen-teaser-in { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes nexxen-teaser-in { from { opacity: 0; transform: translateY(16px) scale(.5); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes nexxen-teaser-glow {
 	0%, 100% { box-shadow: 0 8px 24px rgba(18,17,16,.10), 0 0 0 0 rgba(48,111,219,0); transform: scale(1); }
 	50%      { box-shadow: 0 12px 30px rgba(48,111,219,.20), 0 0 16px 2px rgba(48,111,219,.16); transform: scale(1.02); }
@@ -399,7 +400,7 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 		root.className = 'nexxen-widget';
 		root.innerHTML =
 			'<button class="nexxen-bubble" type="button" aria-label="Otvori chat">' +
-				'<svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.2 1.1 4.2 3 5.6V21l3.5-2c1.1.3 2.3.5 3.5.5 5.5 0 10-3.6 10-8s-4.5-8-10-8z"/></svg>' +
+				'<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>' +
 			'</button>' +
 			'<div class="nexxen-panel nexxen-hidden" role="dialog" aria-label="Nexxen podrška">' +
 				'<div class="nexxen-header">' +
