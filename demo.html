@@ -88,9 +88,15 @@ body { margin: 0; font-family: var(--nx-font); color: var(--nx-text); background
 .nexxen-widget, .nexxen-widget * { box-sizing: border-box; }
 
 /* Launcher */
-.nexxen-bubble { position: fixed; right: 24px; bottom: 24px; width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer; background: var(--nx-accent); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(48,111,219,.40); z-index: 999999; transition: transform .15s ease; }
+.nexxen-bubble { position: fixed; right: 24px; bottom: 24px; width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer; background: var(--nx-accent); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(48,111,219,.40); z-index: 999999; transition: transform .15s ease; animation: nexxen-bubble-pulse 2.6s ease-out infinite; }
 .nexxen-bubble:hover { transform: scale(1.06); }
 .nexxen-bubble svg { width: 26px; height: 26px; fill: #fff; }
+.nexxen-bubble-still { animation: none; box-shadow: 0 8px 24px rgba(48,111,219,.40); }
+@keyframes nexxen-bubble-pulse {
+	0%   { box-shadow: 0 8px 24px rgba(48,111,219,.40), 0 0 0 0 rgba(48,111,219,.45); }
+	70%  { box-shadow: 0 8px 24px rgba(48,111,219,.40), 0 0 0 16px rgba(48,111,219,0); }
+	100% { box-shadow: 0 8px 24px rgba(48,111,219,.40), 0 0 0 0 rgba(48,111,219,0); }
+}
 
 /* Panel */
 .nexxen-panel { position: fixed; right: 24px; bottom: 96px; width: 384px; max-width: calc(100vw - 40px); height: 600px; max-height: calc(100vh - 130px); background: var(--nx-bg); border: 1px solid var(--nx-line); border-radius: var(--nx-r-panel); box-shadow: 0 20px 60px rgba(18,17,16,.16); display: flex; flex-direction: column; overflow: hidden; z-index: 999999; font-family: var(--nx-font); font-size: 15px; line-height: 1.5; color: var(--nx-text); }
@@ -173,11 +179,18 @@ body { margin: 0; font-family: var(--nx-font); color: var(--nx-text); background
 @media (max-width: 480px) { .nexxen-panel { right: 10px; left: 10px; bottom: 84px; width: auto; height: calc(100vh - 104px); } }
 
 /* Tizer oblačić pored launcher dugmeta */
-.nexxen-teaser { position: fixed; right: 24px; bottom: 96px; max-width: 232px; background: #fff; color: var(--nx-text); border: 1px solid var(--nx-line); border-radius: 16px; padding: 12px 34px 12px 15px; font-family: var(--nx-font); font-size: 14px; line-height: 1.45; box-shadow: 0 10px 30px rgba(18,17,16,.12); cursor: pointer; z-index: 999998; animation: nexxen-teaser-in .45s ease both, nexxen-teaser-glow 3.4s ease-in-out .8s infinite; }
-.nexxen-teaser-x { position: absolute; top: 7px; right: 9px; background: none; border: none; color: var(--nx-muted); font-size: 16px; line-height: 1; cursor: pointer; padding: 2px; }
+.nexxen-teaser { position: fixed; right: 24px; bottom: 96px; max-width: 250px; display: flex; align-items: center; gap: 10px; background: #fff; color: var(--nx-text); border: 1px solid var(--nx-line); border-radius: 18px; padding: 11px 34px 11px 11px; font-family: var(--nx-font); font-size: 14px; line-height: 1.4; box-shadow: 0 10px 30px rgba(18,17,16,.12); cursor: pointer; z-index: 999998; transform-origin: bottom right; animation: nexxen-teaser-in .45s ease both, nexxen-teaser-glow 3.6s ease-in-out .8s infinite; }
+.nexxen-teaser-avatar { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--nx-surface); }
+.nexxen-teaser-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nexxen-teaser-avatar.nexxen-avatar-mono { background: var(--nx-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; }
+.nexxen-teaser-text { flex: 1; }
+.nexxen-teaser-x { position: absolute; top: 6px; right: 9px; background: none; border: none; color: var(--nx-muted); font-size: 16px; line-height: 1; cursor: pointer; padding: 2px; }
 .nexxen-teaser-x:hover { color: var(--nx-text); }
 @keyframes nexxen-teaser-in { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes nexxen-teaser-glow { 0%, 100% { box-shadow: 0 10px 30px rgba(18,17,16,.12); } 50% { box-shadow: 0 12px 34px rgba(48,111,219,.30); } }
+@keyframes nexxen-teaser-glow {
+	0%, 100% { box-shadow: 0 8px 24px rgba(18,17,16,.10), 0 0 0 0 rgba(48,111,219,0); transform: scale(1); }
+	50%      { box-shadow: 0 12px 30px rgba(48,111,219,.20), 0 0 16px 2px rgba(48,111,219,.16); transform: scale(1.02); }
+}
 
 /* Ocena usluge (skala 1-10 + komentar) */
 .nexxen-rating { position: fixed; right: 24px; bottom: 96px; width: 330px; max-width: calc(100vw - 40px); background: #fff; border: 1px solid var(--nx-line); border-radius: var(--nx-r-card); box-shadow: 0 20px 60px rgba(18,17,16,.16); padding: 20px 18px; z-index: 999999; font-family: var(--nx-font); }
@@ -425,6 +438,7 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 				'</div>' +
 			'</div>' +
 			'<div class="nexxen-teaser nexxen-hidden">' +
+				'<div class="nexxen-teaser-avatar"></div>' +
 				'<span class="nexxen-teaser-text">Da li Vam je potrebna pomoć?</span>' +
 				'<button class="nexxen-teaser-x" type="button" aria-label="Zatvori">&times;</button>' +
 			'</div>';
@@ -448,6 +462,7 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 		els.headerAvatar = root.querySelector( '.nexxen-avatar' );
 		els.teaser   = root.querySelector( '.nexxen-teaser' );
 		els.teaserX  = root.querySelector( '.nexxen-teaser-x' );
+		paintAvatar( root.querySelector( '.nexxen-teaser-avatar' ) );
 		paintAvatar( els.headerAvatar );
 
 		els.bubble.addEventListener( 'click', togglePanel );
@@ -487,11 +502,13 @@ PRAVILA: odgovaraj kratko i fokusirano; nikada ne izmišljaj informacije, cene, 
 		els.panel.classList.toggle( 'nexxen-hidden' );
 		if ( opening ) {
 			hideTeaser( true );
+			els.bubble.classList.add( 'nexxen-bubble-still' ); // ugasi puls dok je chat otvoren
 			var r = document.querySelector( '.nexxen-rating' ); if ( r ) { r.remove(); }
 			if ( ! greeted ) { greet(); }     // pozdrav samo jednom
 			else { armInactivity(); }
 			els.input.focus();
 		} else {
+			els.bubble.classList.remove( 'nexxen-bubble-still' ); // vrati puls kad je chat zatvoren
 			clearInactivity();
 			// Korisnik sam zatvorio chat nakon razgovora -> ponudi ocenu.
 			if ( messages.length > 0 && ! ratingShown ) { endConversation(); }
